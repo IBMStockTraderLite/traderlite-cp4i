@@ -1,0 +1,12 @@
+dependencies:
+- name: mariadb
+  repository: https://charts.bitnami.com/bitnami/
+  version: 7.4.2
+- name: mongodb
+  repository: https://charts.bitnami.com/bitnami/
+  version: 7.4.2
+- name: ibm-mqadvanced-server-dev
+  repository: https://raw.githubusercontent.com/IBM/charts/master/repo/stable/
+  version: 6.0.0
+digest: sha256:ae1d30d7f8710d529b80c4735ee1ecffabc6a53a6f9134a4e902274a80a92e4a
+generated: "2020-06-01T11:28:11.708736-05:00"

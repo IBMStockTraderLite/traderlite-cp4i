@@ -1,0 +1,4 @@
+Trader Lite V2.0 is deployed.
+
+Run  the following command to get the URL of  the applications's UI:
+ echo "http://"`oc get route {{ .Release.Name }}-tradr  -o jsonpath='{.spec.host }'`"/tradr"

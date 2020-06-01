@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-config
+data:
+{{- if .Values.kafkaIntegration.enabled }}
+  eventStreamsState: "enabled"
+  mq.qname: "{{ .Values.mqaccess.qname }}"
+  mq.qmgr: "{{ .Values.mqaccess.qmgr }}"
+  mq.listener: "{{ .Release.Name }}-ibm-mq(1414)"
+  mq.channel: "{{ .Values.mqaccess.channel }}"
+{{- else }}
+  eventStreamsState: "disabled"
+{{- end }}
+{{- if .Values.salesforceIntegration.enabled }}
+  salesforceIntegrationState: "enabled"
+  salesforce.flow.url: "{{ .Values.salesforceIntegration.flow.url }}"
+  salesforce.flow.path: "{{ .Values.salesforceIntegration.flow.path }}"
+{{- else }}
+  salesforceIntegrationState: "disabled"
+{{- end }}
+  mariadb.db.name: "{{ .Values.mariadb.db.name }}"
+  mariadb.db.port: "{{ .Values.mariadb.service.port }}"
+  mariadb.db.host: "{{ .Release.Name }}-mariadb"
+  mongodb.db.name: "{{ .Values.mongodb.mongodbDatabase }}"
+  mongodb.db.port: "{{ .Values.mongodb.service.port }}"
+  mongodb.db.host: "{{ .Release.Name }}-mongodb"
+  apic.stockQuote.url: "{{ .Values.stockQuote.apic.url }}"
+  tradeHistory.url: "http://{{ .Release.Name }}-trade-history-service:{{ .Values.tradeHistory.service.port }}"
+  stockQuote.url: "http://{{ .Release.Name }}-stock-quote-service:{{ .Values.stockQuote.service.port }}"
+  portfolio.url: "http://{{ .Release.Name }}-portfolio-service:{{ .Values.portfolio.service.port }}"

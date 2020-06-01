@@ -1,0 +1,68 @@
+swagger: '2.0'
+info:
+  title: Realtime stock quotes
+  x-ibm-name: realtime-stock-quotes
+  version: 1.0.0
+host: $(catalog.host)
+schemes:
+  - https
+basePath: /stocks
+produces:
+  - application/json
+securityDefinitions: {}
+x-ibm-configuration:
+  properties:
+    target-url:
+      value: ''
+      encoded: false
+  cors:
+    enabled: true
+  gateway: datapower-gateway
+  type: rest
+  phase: realized
+  enforced: true
+  testable: true
+  assembly:
+    execute:
+      - proxy:
+          title: invoke
+          version: 1.0.0
+          verb: keep
+          target-url: $(target-url)$(request.path)
+  application-authentication:
+    certificate: false
+  catalogs: {}
+paths:
+  /stock-quote/djia:
+    get:
+      responses:
+        '200':
+          schema:
+            type: string
+          description: success
+      produces:
+        - application/json
+  /stock-quote/about:
+    get:
+      responses:
+        '200':
+          schema:
+            type: string
+          description: success
+      produces:
+        - text/plain
+  /stock-quote:
+    get:
+      responses:
+        '200':
+          description: success
+          schema:
+            type: string
+      produces:
+        - application/json
+    parameters:
+      - name: symbols
+        in: query
+        required: true
+        description: Comma separated list of symbols
+        type: string

@@ -1,0 +1,190 @@
+# Default values for trader.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+kafkaIntegration:
+  enabled: false
+salesforceIntegration:
+  enabled: false
+  flow:
+    url: <your app connect flow endpoint>
+    path: "/Client"
+    apiKey: "notsecured"
+
+portfolio:
+  service:
+    port: 8080
+  image:
+    repository: clouddragons/portfolio-spring-cp4i
+    tag: "1.1"
+    pullPolicy: Always
+    pullSecrets:
+
+stockQuote:
+  service:
+    port: 9080
+  apic:
+    url: <your api connect endpoint for the external stock quote service>
+    clientId: <your api connect cliendId for the external stock quote service>
+  image:
+    repository: clouddragons/stock-quote-liberty
+    tag: "1.0"
+    pullPolicy: Always
+    pullSecrets:
+tradeHistory:
+  service:
+    port: 5000
+
+  image:
+    repository: clouddragons/trade-history-python
+    tag: "2.0"
+    pullPolicy: Always
+    pullSecrets:
+tradr:
+  service:
+    port: 3000
+  image:
+    repository: clouddragons/tradr-node-jquery-cp4i
+    tag: "1.0"
+    pullPolicy: Always
+    pullSecrets:
+
+kafkaConnectStandalone:
+  enabled: false
+
+  image:
+    repository: clouddragons/stocktrader-kafka-connect-standalone-cp4i
+    tag: "1.1"
+    pullPolicy: Always
+    pullSecrets:
+
+mqaccess:
+  qname: "TRADE.EVENT.QUEUE"
+  qmgr: "QMTRADER"
+  channel: "DEV.APP.SVRCONN"
+  user: app
+  password: passw0rd
+
+kafkaAccess:
+  apiKey: <your Kafka api key>
+  topic: <Event Streams topic>
+  bootstrapHost: <Event Streams bootstrap host>
+
+ibm-mqadvanced-server-dev:
+  license: accept
+  image:
+    repository: clouddragons/trader-mq
+    tag: 9.1.5.0-r1
+  persistence:
+    enabled: false
+  queueManager:
+    name: QMTRADER
+    dev:
+      secret:
+        name: qmtrader
+        adminPasswordKey: password
+        appPasswordKey: password
+  metrics:
+    enabled: false
+
+mongodb:
+  mongodbDatabase: trader
+  mongodbUsername: traderuser
+  mongodbPassword: n0tSecure
+  mongodbRootPassword: n0tSecure
+
+  persistence:
+    enabled: false
+  securityContext:
+    fsGroup:
+    runAsUser:
+  service:
+    ## Kubernetes service type, ClusterIP and NodePort are supported at present
+    type: ClusterIP
+    # clusterIp: None
+    port: 27017
+
+mariadb:
+  master:
+    persistence:
+      ## If true, use a Persistent Volume Claim, If false, use emptyDir
+      ##
+      enabled: false
+      # storageClass: ''-''
+    resources:
+     limits:
+        cpu: 500m
+        memory: 500Mi
+     requests:
+        cpu: 200m
+        memory: 250Mi
+
+  slave:
+    replicas: 0
+
+  db:
+    name: "trader"
+    user: "traderuser"
+    password: n0tSecure
+    forcePassword: false
+
+  service:
+    ## Kubernetes service type, ClusterIP and NodePort are supported at present
+    type: ClusterIP
+    # clusterIp: None
+    port: 3306
+
+  ## Pods Service Account
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
+  serviceAccount:
+    ## Specifies whether a ServiceAccount should be created
+    ##
+    create: false
+    ## The name of the ServiceAccount to use.
+    ## If not set and create is true, a name is generated using the mariadb.fullname template
+    # name:
+
+  ## Role Based Access
+  ## Ref: https://kubernetes.io/docs/admin/authorization/rbac/
+  ##
+
+  rbac:
+    create: false
+
+  ## Pod Security Context
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+  ##
+  securityContext:
+    fsGroup:
+    runAsUser:
+
+  # # Use existing secret (ignores root, db and replication passwords)
+  # existingSecret:
+
+  rootUser:
+    ## MariaDB admin password
+    ## ref: https://github.com/bitnami/bitnami-docker-mariadb#setting-the-root-password-on-first-run
+    ##
+
+    ##
+    ## Option to force users to specify a password. That is required for ''helm upgrade'' to work properly.
+    ## If it is not force, a random password will be generated.
+    forcePassword: false
+
+  replication:
+    ## Enable replication. This enables the creation of replicas of MariaDB. If false, only a
+    ## master deployment would be created
+    enabled: false
+
+
+  ## initdb scripts
+  ## Specify dictionnary of scripts to be run at first boot
+  ## Alternatively, you can put your scripts under the files/docker-entrypoint-initdb.d directory
+  ##
+  initdbScripts:
+    initdb.sql: |
+       use trader;
+       CREATE TABLE portfolio(portfolioId INT NOT NULL AUTO_INCREMENT, clientId VARCHAR(64) NOT NULL, total DECIMAL(12,2), loyalty VARCHAR(8), balance DECIMAL(12,2) DEFAULT 50000, commissions DECIMAL(12,2), freeTrades INTEGER, PRIMARY KEY(portfolioId));
+       ALTER TABLE portfolio AUTO_INCREMENT=1000;
+       CREATE TABLE stock(portfolioId INT NOT NULL, symbol VARCHAR(8) NOT NULL, shares INTEGER, price DECIMAL(12,2), total DECIMAL(12,2), lastQuoted TIMESTAMP, commission DECIMAL(12,2), FOREIGN KEY (portfolioId) REFERENCES portfolio(portfolioId) ON DELETE CASCADE, PRIMARY KEY(portfolioId, symbol));
+       CREATE TABLE client(clientId VARCHAR(64) NOT NULL, firstName VARCHAR(64) NOT NULL, lastName VARCHAR(64) NOT NULL, email VARCHAR(64) NOT NULL, phone VARCHAR(64) NOT NULL, preferredContactMethod ENUM('email','text','phone','mail') NOT NULL, salesforceContactId VARCHAR(32) DEFAULT 'N/A', PRIMARY KEY(clientId));

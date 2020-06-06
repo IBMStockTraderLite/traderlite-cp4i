@@ -13,7 +13,7 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-# Validate directory  script is run form
+# Validate directory  script is run from
 if test "$0" = "./installOperator.sh"
 then
    echo "Script being run from correct folder"

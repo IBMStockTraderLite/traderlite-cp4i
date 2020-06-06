@@ -13,7 +13,7 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-# Validate directory  script is run form
+# Validate directory  script is run from
 if test "$0" = "./addSalesforceIntegration.sh"
 then
    echo "Script being run from correct folder"
@@ -28,7 +28,7 @@ usage () {
   echo "addSalesforceIntegration.sh APPCONNECT_FLOW_URL"
 }
 
-# consumerRecordst number of parameters
+# check number of parameters
 if [ "$#" -ne 1 ]
 then
     usage

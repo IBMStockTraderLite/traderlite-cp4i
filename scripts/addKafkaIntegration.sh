@@ -13,7 +13,7 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-# Validate directory  script is run form
+# Validate directory  script is run from
 if test "$0" = "./addKafkaIntegration.sh"
 then
    echo "Script being run from correct folder"
@@ -27,7 +27,7 @@ usage () {
   echo "addKafkaIntegration.sh KAFKA_BOOTSTRAP_SERVER  KAFKA_API_KEY JAVA_KEYSTORE_FILE"
 }
 
-# consumerRecordst number of parameters
+# check number of parameters
 if [ "$#" -ne 3 ]
 then
     usage
@@ -123,22 +123,6 @@ if [ $? -ne 0 ]; then
   echo "Update of Trader Lite failed"
   exit 1
 fi
-
-# Wait up to 20 seconds for Kafka Connect secret to be created by previous step
-#echo "Wait up to 20 seconds for Kafka Connect secret to be created by previous step"
-#attempts=20
-#until [ "$attempts" -eq 0 ]
-#do
-#  oc get secret traderlite-kafkaconnect-configfiles  >/dev/null 2>&1 && break
-#  attempts=$((attempts-1))
-#  echo "Secret not found ${attempts} seconds remaining"
-#  sleep 1
-#done
-
-#if [ "$attempts" -eq 0 ]; then
-#  echo "Error: Kafka connect config secret not found"
-#  exit 1
-#fi
 
 echo "Kafka Integration successful"
 echo "Wait for all pods to be in the 'Ready' state before continuing"

@@ -14,7 +14,7 @@
 #    limitations under the License.
 
 
-# Validate directory  script is run form
+# Validate directory  script is run from
 if test "$0" = "./cleanup.sh"
 then
    echo "Script being run from correct folder"

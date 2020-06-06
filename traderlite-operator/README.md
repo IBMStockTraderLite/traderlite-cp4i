@@ -25,7 +25,7 @@ spec:
 ```
 
 
-| Parameter                           | Description                                         | Default                                                                         | Required ?
+| Parameter                           | Description                                         | Default                                                                         | Required
 | ----------------------------------- | ----------------------------------------------------| ------------------------------------------------------------------| ---------------------|
 | | | |
 | stockQuoteMicroservice.apic.url | APIC  Endpoint for Stock Quote service |  `nil` |  Yes

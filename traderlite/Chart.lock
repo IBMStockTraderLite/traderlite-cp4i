@@ -8,5 +8,8 @@ dependencies:
 - name: ibm-mqadvanced-server-dev
   repository: https://raw.githubusercontent.com/IBM/charts/master/repo/stable/
   version: 6.0.0
-digest: sha256:ae1d30d7f8710d529b80c4735ee1ecffabc6a53a6f9134a4e902274a80a92e4a
-generated: "2020-06-01T11:28:11.708736-05:00"
+- name: kafkaConnect
+  repository: file://kafkaConnect
+  version: 1.0.0
+digest: sha256:b4ab58a4658795eec66bb99829299dd935253c4a483072698431a639703ba4ea
+generated: "2020-06-05T09:20:25.811529-05:00"

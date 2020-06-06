@@ -1,9 +1,28 @@
 # Default values for trader.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
+global:
+  kafkaAccess:
+    apiKey: <your Kafka api key>
+    topic: <Event Streams topic>
+    bootstrapHost: <Event Streams bootstrap host>
+  mqaccess:
+    qname: "TRADE.EVENT.QUEUE"
+    qmgr: "QMTRADER"
+    channel: "DEV.APP.SVRCONN"
+    user: app
+    password: passw0rd
+    secret:
+      name: traderlite-localmq-secret
+  mongodbaccess:
+    mongodbDatabase: trader
+    mongodbUsername: traderuser
+    mongodbPassword: n0tSecure
+    mongodbPort: 27017
 
 kafkaIntegration:
   enabled: false
+
 salesforceIntegration:
   enabled: false
   flow:
@@ -11,7 +30,16 @@ salesforceIntegration:
     path: "/Client"
     apiKey: "notsecured"
 
-portfolio:
+kafkaConnect:
+  keystore:
+    secret:
+      name: kafkaconnect-keystore
+  image:
+    repository: clouddragons/stocktrader-kafka-connect-standalone-cp4i
+    tag: "1.2"
+    pullPolicy: Always
+
+portfolioMicroservice:
   service:
     port: 8080
   image:
@@ -20,7 +48,7 @@ portfolio:
     pullPolicy: Always
     pullSecrets:
 
-stockQuote:
+stockQuoteMicroservice:
   service:
     port: 9080
   apic:
@@ -31,7 +59,8 @@ stockQuote:
     tag: "1.0"
     pullPolicy: Always
     pullSecrets:
-tradeHistory:
+
+tradeHistoryMicroservice:
   service:
     port: 5000
 
@@ -40,7 +69,8 @@ tradeHistory:
     tag: "2.0"
     pullPolicy: Always
     pullSecrets:
-tradr:
+
+tradrMicroservice:
   service:
     port: 3000
   image:
@@ -49,28 +79,7 @@ tradr:
     pullPolicy: Always
     pullSecrets:
 
-kafkaConnectStandalone:
-  enabled: false
-
-  image:
-    repository: clouddragons/stocktrader-kafka-connect-standalone-cp4i
-    tag: "1.1"
-    pullPolicy: Always
-    pullSecrets:
-
-mqaccess:
-  qname: "TRADE.EVENT.QUEUE"
-  qmgr: "QMTRADER"
-  channel: "DEV.APP.SVRCONN"
-  user: app
-  password: passw0rd
-
-kafkaAccess:
-  apiKey: <your Kafka api key>
-  topic: <Event Streams topic>
-  bootstrapHost: <Event Streams bootstrap host>
-
-ibm-mqadvanced-server-dev:
+localMQ:
   license: accept
   image:
     repository: clouddragons/trader-mq
@@ -81,17 +90,18 @@ ibm-mqadvanced-server-dev:
     name: QMTRADER
     dev:
       secret:
-        name: qmtrader
+        name: traderlite-localmq-secret
         adminPasswordKey: password
         appPasswordKey: password
   metrics:
     enabled: false
 
-mongodb:
+tradeHistoryDB:
   mongodbDatabase: trader
   mongodbUsername: traderuser
   mongodbPassword: n0tSecure
   mongodbRootPassword: n0tSecure
+  nameOverride: mongodb
 
   persistence:
     enabled: false
@@ -104,7 +114,8 @@ mongodb:
     # clusterIp: None
     port: 27017
 
-mariadb:
+tradeTransactionalDB:
+  nameOverride: mariadb
   master:
     persistence:
       ## If true, use a Persistent Volume Claim, If false, use emptyDir
@@ -181,10 +192,4 @@ mariadb:
   ## Specify dictionnary of scripts to be run at first boot
   ## Alternatively, you can put your scripts under the files/docker-entrypoint-initdb.d directory
   ##
-  initdbScripts:
-    initdb.sql: |
-       use trader;
-       CREATE TABLE portfolio(portfolioId INT NOT NULL AUTO_INCREMENT, clientId VARCHAR(64) NOT NULL, total DECIMAL(12,2), loyalty VARCHAR(8), balance DECIMAL(12,2) DEFAULT 50000, commissions DECIMAL(12,2), freeTrades INTEGER, PRIMARY KEY(portfolioId));
-       ALTER TABLE portfolio AUTO_INCREMENT=1000;
-       CREATE TABLE stock(portfolioId INT NOT NULL, symbol VARCHAR(8) NOT NULL, shares INTEGER, price DECIMAL(12,2), total DECIMAL(12,2), lastQuoted TIMESTAMP, commission DECIMAL(12,2), FOREIGN KEY (portfolioId) REFERENCES portfolio(portfolioId) ON DELETE CASCADE, PRIMARY KEY(portfolioId, symbol));
-       CREATE TABLE client(clientId VARCHAR(64) NOT NULL, firstName VARCHAR(64) NOT NULL, lastName VARCHAR(64) NOT NULL, email VARCHAR(64) NOT NULL, phone VARCHAR(64) NOT NULL, preferredContactMethod ENUM('email','text','phone','mail') NOT NULL, salesforceContactId VARCHAR(32) DEFAULT 'N/A', PRIMARY KEY(clientId));
+  initdbScriptsConfigMap: mariadb-init-scripts

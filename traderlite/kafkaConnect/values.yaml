@@ -1,0 +1,13 @@
+# Default values for kafkaconnect.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+keystore:
+  secret:
+    name:
+
+image:
+  repository: clouddragons/stocktrader-kafka-connect-standalone-cp4i
+  tag: "1.2"
+  pullPolicy: Always
+  pullSecrets:

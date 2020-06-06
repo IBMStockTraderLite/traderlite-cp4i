@@ -104,4 +104,7 @@ else
   exit 1
 fi
 
+echo "Salesforce Integration configured successfully"
+echo "Wait for all pods to be in the 'Ready' state before continuing"
+
 exit 0

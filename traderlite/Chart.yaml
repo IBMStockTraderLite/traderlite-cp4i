@@ -1,15 +1,23 @@
 apiVersion: v2
 description: A Helm chart for Kubernetes
 name: traderlite
-version: 1.0.0
+version: 1.0.1
+type: application
 dependencies:
   - name: mariadb
     version: 7.4.2
     repository: https://charts.bitnami.com/bitnami/
+    alias: tradeTransactionalDB
   - name: mongodb
     version: 7.4.2
     repository: https://charts.bitnami.com/bitnami/
+    alias: tradeHistoryDB
   - name: ibm-mqadvanced-server-dev
     version: 6.0.0
     repository: https://raw.githubusercontent.com/IBM/charts/master/repo/stable/
+    alias: localMQ
+    condition: kafkaIntegration.enabled
+  - name: kafkaConnect
+    version: 1.0.0
+    repository: file://kafkaConnect
     condition: kafkaIntegration.enabled

@@ -31,7 +31,7 @@ spec:
     spec:
       containers:
       - name: {{ .Release.Name }}-portfolio
-        image: "{{ .Values.portfolio.image.repository }}:{{ .Values.portfolio.image.tag }}"
+        image: "{{ .Values.portfolioMicroservice.image.repository }}:{{ .Values.portfolioMicroservice.image.tag }}"
         env:
           - name: JDBC_HOST
             valueFrom:
@@ -150,10 +150,10 @@ spec:
             cpu: 600m
             memory: 500Mi
 
-        imagePullPolicy: {{ .Values.portfolio.image.pullPolicy }}
-      {{- if .Values.portfolio.image.pullSecrets }}
+        imagePullPolicy: {{ .Values.portfolioMicroservice.image.pullPolicy }}
+      {{- if .Values.portfolioMicroservice.image.pullSecrets }}
       imagePullSecrets:
-      - name: {{ .Values.portfolio.image.pullSecrets }}
+      - name: {{ .Values.portfolioMicroservice.image.pullSecrets }}
       {{- end }}
 ---
 #Deploy the service

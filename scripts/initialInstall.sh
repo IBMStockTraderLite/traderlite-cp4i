@@ -72,7 +72,7 @@ fi
 
 # Install traderlite via Helm3
 echo "Installing Trader Lite Helm chart ..."
-helm install traderlite  --set stockQuote.apic.url="$1" --set stockQuote.apic.clientId="$2" ../traderlite  --disable-openapi-validation
+helm install traderlite  --set stockQuoteMicroservice.apic.url="$1" --set stockQuoteMicroservice.apic.clientId="$2" ../traderlite  --disable-openapi-validation
 if [ $? -eq 0 ]; then
   echo "Trader Lite Helm chart install successful"
   echo "Wait for all pods to be in the 'Ready' state before continuing"

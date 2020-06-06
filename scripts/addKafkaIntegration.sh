@@ -104,15 +104,21 @@ echo "Using $KAFKA_TOPIC as Kafka topic name ..."
 
 # Reinstalling Stock Trader Helm chart
 
-echo "Upgrading Trader Lite Helm chart with Kafka Integration enabled ..."
+KEYSTORE_SECRET_NAME=`helm get values traderlite --all | yq -r .kafkaConnect.keystore.secret.name`
+echo "Adding secret $KEYSTORE_SECRET_NAME with downloaded Java keystore"
+oc create secret generic $KEYSTORE_SECRET_NAME --from-file=es-cert.jks=$3
+if [ $? -ne 0 ]; then
+  echo "Update of Kafka access secret failed"
+  exit 1
+fi
 
-cp $3 ../traderlite/certs
-helm upgrade traderlite --set kafkaIntegration.enabled=true --set kafkaConnectStandalone.enabled=true --set kafkaAccess.apiKey=$2 --set kafkaAccess.topic=$KAFKA_TOPIC --set kafkaAccess.bootstrapHost=$1 --reuse-values ../traderlite
-if [ $? -eq 0 ]; then
-  echo "Wait for all pods to be in the 'Ready' state before continuing"
-else
+echo "Upgrading Trader Lite Helm chart with Kafka Integration enabled ..."
+helm upgrade traderlite --set kafkaIntegration.enabled=true --set global.kafkaAccess.apiKey=$2 --set global.kafkaAccess.topic=$KAFKA_TOPIC --set global.kafkaAccess.bootstrapHost=$1  --reuse-values ../traderlite
+if [ $? -ne 0 ]; then
   echo "Upgrade of Trader Lite Helm chart failed"
   exit 1
 fi
 
+echo "Kafka Integration configured successfully"
+echo "Wait for all pods to be in the 'Ready' state before continuing"
 exit 0

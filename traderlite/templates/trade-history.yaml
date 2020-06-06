@@ -31,7 +31,7 @@ spec:
     spec:
       containers:
       - name: trade-history
-        image: "{{ .Values.tradeHistory.image.repository }}:{{ .Values.tradeHistory.image.tag }}"
+        image: "{{ .Values.tradeHistoryMicroservice.image.repository }}:{{ .Values.tradeHistoryMicroservice.image.tag }}"
         env:
           - name: DB_HOST
             valueFrom:
@@ -60,12 +60,12 @@ spec:
                 key: mongodb.db.pwd
 
         ports:
-          - containerPort: {{ .Values.tradeHistory.service.port }}
+          - containerPort: {{ .Values.tradeHistoryMicroservice.service.port }}
 
-        imagePullPolicy: {{ .Values.tradeHistory.image.pullPolicy }}
-      {{- if .Values.tradeHistory.image.pullSecrets }}
+        imagePullPolicy: {{ .Values.tradeHistoryMicroservice.image.pullPolicy }}
+      {{- if .Values.tradeHistoryMicroservice.image.pullSecrets }}
       imagePullSecrets:
-      - name: {{ .Values.tradeHistory.image.pullSecrets }}
+      - name: {{ .Values.tradeHistoryMicroservice.image.pullSecrets }}
       {{- end }}
 ---
 #Deploy the service
@@ -79,8 +79,8 @@ spec:
   ports:
     - name: http
       protocol: TCP
-      port: {{ .Values.tradeHistory.service.port }}
-      targetPort: {{ .Values.tradeHistory.service.port }}
+      port: {{ .Values.tradeHistoryMicroservice.service.port }}
+      targetPort: {{ .Values.tradeHistoryMicroservice.service.port }}
   selector:
     app: {{ .Release.Name }}-trade-history
 ---

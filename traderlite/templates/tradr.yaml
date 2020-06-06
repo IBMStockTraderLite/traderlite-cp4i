@@ -31,7 +31,7 @@ spec:
     spec:
       containers:
       - name: {{ .Release.Name }}-tradr
-        image: "{{ .Values.tradr.image.repository }}:{{ .Values.tradr.image.tag }}"
+        image: "{{ .Values.tradrMicroservice.image.repository }}:{{ .Values.tradrMicroservice.image.tag }}"
         env:
           - name: STOCK_QUOTE_URL
             valueFrom:
@@ -50,7 +50,7 @@ spec:
                 name: {{ .Release.Name }}-config
                 key: portfolio.url
         ports:
-          - containerPort: {{ .Values.tradr.service.port }}
+          - containerPort: {{ .Values.tradrMicroservice.service.port }}
         resources:
           limits:
             cpu: 500m
@@ -58,12 +58,12 @@ spec:
           requests:
             cpu: 500m
             memory: 500Mi
-        imagePullPolicy: {{ .Values.tradr.image.pullPolicy }}
+        imagePullPolicy: {{ .Values.tradrMicroservice.image.pullPolicy }}
 
 
-      {{- if .Values.tradr.image.pullSecrets }}
+      {{- if .Values.tradrMicroservice.image.pullSecrets }}
       imagePullSecrets:
-      - name: {{ .Values.tradr.image.pullSecrets }}
+      - name: {{ .Values.tradrMicroservice.image.pullSecrets }}
       {{- end }}
 ---
 #Deploy the service

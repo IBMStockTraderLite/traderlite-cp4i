@@ -3,35 +3,14 @@ info:
   title: Realtime stock quotes
   x-ibm-name: realtime-stock-quotes
   version: 1.0.0
-host: $(catalog.host)
+host: "stock-trader-quote.us-south.cf.appdomain.cloud"
 schemes:
   - https
 basePath: /stocks
 produces:
   - application/json
 securityDefinitions: {}
-x-ibm-configuration:
-  properties:
-    target-url:
-      value: ''
-      encoded: false
-  cors:
-    enabled: true
-  gateway: datapower-gateway
-  type: rest
-  phase: realized
-  enforced: true
-  testable: true
-  assembly:
-    execute:
-      - proxy:
-          title: invoke
-          version: 1.0.0
-          verb: keep
-          target-url: $(target-url)$(request.path)
-  application-authentication:
-    certificate: false
-  catalogs: {}
+
 paths:
   /stock-quote/djia:
     get:

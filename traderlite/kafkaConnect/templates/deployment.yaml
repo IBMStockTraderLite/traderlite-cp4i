@@ -13,7 +13,6 @@
 #   limitations under the License.
 
 #Deploy the pod
-{{- if and .Values.kafkaIntegration.enabled .Values.kafkaConnectStandalone.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -31,10 +30,12 @@ spec:
     spec:
       containers:
       - name: kafka-connect-standalone
-        image: "{{ .Values.kafkaConnectStandalone.image.repository }}:{{ .Values.kafkaConnectStandalone.image.tag }}"
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         volumeMounts:
         - mountPath: "/opt/kafka/mountedconfig"
-          name: kckeystore
+          name: configfiles
+        - mountPath: "/opt/kafka/mountedkeystore"
+          name: keystore
         resources:
           limits:
             cpu: 600m
@@ -44,10 +45,10 @@ spec:
             memory: 500Mi
 
         imagePullPolicy: Always
-        imagePullPolicy: {{ .Values.kafkaConnectStandalone.image.pullPolicy }}
-      {{- if .Values.kafkaConnectStandalone.image.pullSecrets }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+      {{- if .Values.image.pullSecrets }}
         imagePullSecrets:
-         - name: {{ .Values.kafkaConnectStandalone.image.pullSecrets }}
+         - name: {{ .Values.image.pullSecrets }}
       {{- end }}
         securityContext:
           capabilities: {}
@@ -55,7 +56,9 @@ spec:
       restartPolicy: Always
       dnsPolicy: ClusterFirst
       volumes:
-      - name: kckeystore
+      - name: configfiles
         secret:
-          secretName: {{ .Release.Name }}-kafka-credentials
-{{- end }}
+          secretName: {{ .Release.Name }}-kafkaconnect-configfiles
+      - name: keystore
+        secret:
+          secretName: {{ .Values.keystore.secret.name }}

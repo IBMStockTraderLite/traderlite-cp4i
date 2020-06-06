@@ -30,6 +30,8 @@ if [ $? -ne 0 ]; then
   echo "Error deleting trader lite app components"
   exit 1
 else
+  KEYSTORE_SECRET_NAME=`yq -r .kafkaConnect.keystore.secret.name ../traderlite/values.yaml`
+  oc delete secret $KEYSTORE_SECRET_NAME
   echo "trader lite app components successfully deleted"
   exit 0
 fi

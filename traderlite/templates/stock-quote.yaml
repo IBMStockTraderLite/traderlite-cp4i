@@ -32,7 +32,7 @@ spec:
     spec:
       containers:
       - name: {{ .Release.Name }}-stock-quote
-        image: "{{ .Values.stockQuote.image.repository }}:{{ .Values.stockQuote.image.tag }}"
+        image: "{{ .Values.stockQuoteMicroservice.image.repository }}:{{ .Values.stockQuoteMicroservice.image.tag }}"
         env:
           - name: API_CONNECT_PROXY_URL
             valueFrom:
@@ -48,12 +48,12 @@ spec:
                 optional: true
 
         ports:
-          - containerPort: {{ .Values.stockQuote.service.port }}
+          - containerPort: {{ .Values.stockQuoteMicroservice.service.port }}
 
-        imagePullPolicy: {{ .Values.stockQuote.image.pullPolicy }}
-      {{- if .Values.stockQuote.image.pullSecrets }}
+        imagePullPolicy: {{ .Values.stockQuoteMicroservice.image.pullPolicy }}
+      {{- if .Values.stockQuoteMicroservice.image.pullSecrets }}
       imagePullSecrets:
-      - name: {{ .Values.stockQuote.image.pullSecrets }}
+      - name: {{ .Values.stockQuoteMicroservice.image.pullSecrets }}
       {{- end }}
 ---
 #Deploy the service
@@ -66,7 +66,7 @@ spec:
   ports:
     - name: http
       protocol: TCP
-      port: {{ .Values.stockQuote.service.port }}
-      targetPort: {{ .Values.stockQuote.service.port }}
+      port: {{ .Values.stockQuoteMicroservice.service.port }}
+      targetPort: {{ .Values.stockQuoteMicroservice.service.port }}
   selector:
     app: {{ .Release.Name }}-stock-quote

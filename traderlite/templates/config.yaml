@@ -5,10 +5,10 @@ metadata:
 data:
 {{- if .Values.kafkaIntegration.enabled }}
   eventStreamsState: "enabled"
-  mq.qname: "{{ .Values.mqaccess.qname }}"
-  mq.qmgr: "{{ .Values.mqaccess.qmgr }}"
+  mq.qname: "{{ .Values.global.mqaccess.qname }}"
+  mq.qmgr: "{{ .Values.global.mqaccess.qmgr }}"
   mq.listener: "{{ .Release.Name }}-ibm-mq(1414)"
-  mq.channel: "{{ .Values.mqaccess.channel }}"
+  mq.channel: "{{ .Values.global.mqaccess.channel }}"
 {{- else }}
   eventStreamsState: "disabled"
 {{- end }}
@@ -19,13 +19,13 @@ data:
 {{- else }}
   salesforceIntegrationState: "disabled"
 {{- end }}
-  mariadb.db.name: "{{ .Values.mariadb.db.name }}"
-  mariadb.db.port: "{{ .Values.mariadb.service.port }}"
+  mariadb.db.name: "{{ .Values.tradeTransactionalDB.db.name }}"
+  mariadb.db.port: "{{ .Values.tradeTransactionalDB.service.port }}"
   mariadb.db.host: "{{ .Release.Name }}-mariadb"
-  mongodb.db.name: "{{ .Values.mongodb.mongodbDatabase }}"
-  mongodb.db.port: "{{ .Values.mongodb.service.port }}"
+  mongodb.db.name: "{{ .Values.tradeHistoryDB.mongodbDatabase }}"
+  mongodb.db.port: "{{ .Values.tradeHistoryDB.service.port }}"
   mongodb.db.host: "{{ .Release.Name }}-mongodb"
-  apic.stockQuote.url: "{{ .Values.stockQuote.apic.url }}"
-  tradeHistory.url: "http://{{ .Release.Name }}-trade-history-service:{{ .Values.tradeHistory.service.port }}"
-  stockQuote.url: "http://{{ .Release.Name }}-stock-quote-service:{{ .Values.stockQuote.service.port }}"
-  portfolio.url: "http://{{ .Release.Name }}-portfolio-service:{{ .Values.portfolio.service.port }}"
+  apic.stockQuote.url: "{{ .Values.stockQuoteMicroservice.apic.url }}"
+  tradeHistory.url: "http://{{ .Release.Name }}-trade-history-service:{{ .Values.tradeHistoryMicroservice.service.port }}"
+  stockQuote.url: "http://{{ .Release.Name }}-stock-quote-service:{{ .Values.stockQuoteMicroservice.service.port }}"
+  portfolio.url: "http://{{ .Release.Name }}-portfolio-service:{{ .Values.portfolioMicroservice.service.port }}"

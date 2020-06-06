@@ -69,15 +69,24 @@ if [[ "$PROJECT" != "trader-$STUDENTID" ]]; then
    exit 1
 fi
 
+echo "Installing Trader Lite using operator ..."
+cat <<EOF | oc create -f -
+apiVersion: operators.clouddragons.com/v1
+kind: TraderLite
+metadata:
+  name: traderlite
+spec:
+  stockQuoteMicroservice:
+    apic:
+      clientId: $2
+      url: $1
+EOF
 
-# Install traderlite via Helm3
-echo "Installing Trader Lite Helm chart ..."
-helm install traderlite  --set stockQuoteMicroservice.apic.url="$1" --set stockQuoteMicroservice.apic.clientId="$2" ../traderlite  --disable-openapi-validation
 if [ $? -eq 0 ]; then
-  echo "Trader Lite Helm chart install successful"
+  echo "Trader Lite install successful"
   echo "Wait for all pods to be in the 'Ready' state before continuing"
   exit 0
 else
-  echo "Fatal error installing Trader Lite Helm chart"
+  echo "Fatal error installing Trader Lite"
   exit 1
 fi

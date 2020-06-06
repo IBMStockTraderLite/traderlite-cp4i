@@ -1,0 +1,439 @@
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: traderlites.operators.clouddragons.com
+spec:
+  group: operators.clouddragons.com
+  names:
+    kind: TraderLite
+    listKind: TraderLiteList
+    plural: traderlites
+    singular: traderlite
+  scope: Namespaced
+  subresources:
+    status: {}
+  version: v1
+  versions:
+  - name: v1
+    served: true
+    storage: true
+
+  validation:
+    openAPIV3Schema:
+      type: object
+      x-kubernetes-preserve-unknown-fields: true
+      description: Schema for the IBM Trader Lite cloud-native sample application
+      properties:
+        apiVersion:
+          description: 'APIVersion defines the versioned schema of this representation
+            of an object. Servers should convert recognized schemas to the latest
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources'
+          type: string
+        kind:
+          description: 'Kind is a string value representing the REST resource this
+            object represents. Servers may infer this from the endpoint the client
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds'
+          type: string
+        metadata:
+          type: object
+        spec:
+          description: TraderLiteSpec defines the desired state of StockTrader
+          type: object
+          properties:
+
+            salesforceIntegration:
+              type: object
+              properties:
+                enabled:
+                  description: Enable Salesforce integration
+                  type: boolean
+                flow:
+                  description: AppConnect Integration Flow settings
+                  type: object
+                  properties:
+                    url:
+                      description: Flow URL
+                      type: string
+                    path:
+                      description: Flow Path
+                      type: string
+                    apiKey:
+                      description: Flow API Key
+                      type: string
+
+
+            portfolioMicroservice:
+              description: Portfolio microservice
+              type: object
+              properties:
+                service:
+                  description: Service interface
+                  type: object
+                  properties:
+                    port:
+                      type: integer
+
+                image:
+                  description: Docker image settings
+                  type: object
+                  properties:
+                    repository:
+                      description: Docker image registry
+                      type: string
+                    tag:
+                      description: Docker image tag
+                      type: string
+
+            stockQuoteMicroservice:
+              description: Stock Quote microservice
+              type: object
+              properties:
+                service:
+                  description: Service interface
+                  type: object
+                  properties:
+                    port:
+                      type: integer
+
+                image:
+                  description: Docker image settings
+                  type: object
+                  properties:
+                    repository:
+                      description: Docker image registry
+                      type: string
+                    tag:
+                      description: Docker image tag
+                      type: string
+
+                apic:
+                  description: API Connect Settings
+                  type: object
+                  properties:
+                    url:
+                      description: APIC endpoint
+                      type: string
+                    clientId:
+                      description: APIC endpoint api key
+                      type: string
+
+            tradeHistoryMicroservice:
+              description: Trade History microservice
+              type: object
+              properties:
+                service:
+                  description: Service interface
+                  type: object
+                  properties:
+                    port:
+                      type: integer
+
+                image:
+                  description: Docker image settings
+                  type: object
+                  properties:
+                    repository:
+                      description: Docker image registry
+                      type: string
+                    tag:
+                      description: Docker image tag
+                      type: string
+
+            tradrMicroservice:
+              description: Tradr microservice
+              type: object
+              properties:
+                service:
+                  description: Service interface
+                  type: object
+                  properties:
+                    port:
+                      type: integer
+
+                image:
+                  description: Docker image settings
+                  type: object
+                  properties:
+                    repository:
+                      description: Docker image registry
+                      type: string
+                    tag:
+                      description: Docker image tag
+                      type: string
+
+            kafkaConnect:
+              description: Kafka Connect used by Stock Trader for source and sink
+              type: object
+              properties:
+                keystore:
+                  description: Topic Java keystore settings
+                  type: object
+                  properties:
+                    secret:
+                      description: Secret storing keystore file
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                image:
+                  description: Docker image settings
+                  type: object
+                  properties:
+                    repository:
+                      description: Docker image registry
+                      type: string
+                    tag:
+                      description: Docker image tag
+                      type: string
+
+
+            global:
+              description: Global values shared with subcharts
+              type: object
+              properties:
+                kafkaAccess:
+                  description: Access info for Event Streams
+                  type: object
+                  properties:
+                    apiKey:
+                      type: string
+                    topic:
+                      type: string
+                    bootstrapHost:
+                      type: string
+
+                mqaccess:
+                  description: Access info for local MQ
+                  type: object
+                  properties:
+                    qname:
+                      description: Queue name
+                      type: string
+                    qmgr:
+                      description: Queue Manager
+                      type: string
+                    channel:
+                      description: MQ channel
+                      type: string
+                    user:
+                      description: MQ user
+                      type: string
+                    password:
+                      description: MQ password
+                      type: string
+                    secret:
+                      description: Secret with MQ passwords
+                      type: object
+                      properties:
+                        name:
+                          description: Secret name
+                          type: string
+
+                mongodbaccess:
+                  description: Access info for local Mongodb
+                  type: object
+                  properties:
+                     mongodbDatabase:
+                       description: Mongo database name
+                       type: string
+                     mongodbUsername:
+                       description: Mongo database username
+                       type: string
+                     mongodbPassword:
+                       description: Mongo database password
+                       type: string
+                     mongodbPort:
+                       description: Mongo database port
+                       type: integer
+
+            localMQ:
+              description: Local MQ queue manager
+              type: object
+              properties:
+                security:
+                  type: object
+                  properties:
+                    serviceAccountName:
+                      description: Name of the service account to use
+                      type: string
+                license:
+                  description: MQ license acceptance
+                  type: string
+                persistence:
+                  description: Persistence enabled
+                  type: object
+                  properties:
+                    enabled:
+                      type: boolean
+
+                metrics:
+                  description: Metrics enabled
+                  type: object
+                  properties:
+                    enabled:
+                      type: boolean
+
+                image:
+                  description: Docker image settings
+                  type: object
+                  properties:
+                    repository:
+                      description: Docker image registry
+                      type: string
+                    tag:
+                      description: Docker image tag
+                      type: string
+
+                queueManager:
+                  description: Queue manager details
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    dev:
+                      type: object
+                      properties:
+                        secret:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                            adminPasswordKey:
+                              type: string
+                            appPasswordkey:
+                              type: string
+
+            tradeHistoryDB:
+              description: Trade History database
+              type: object
+              properties:
+                nameOverride:
+                  type: string
+                mongodbDatabase:
+                  description: Database name
+                  type: string
+                mongodbUsername:
+                  description: Database username
+                  type: string
+                mongodbPassword:
+                  description: Database password
+                  type: string
+                mongodbRootPassword:
+                  description: Database root password
+                  type: string
+                persistence:
+                  description: Persistence enabled
+                  type: object
+                  properties:
+                    enabled:
+                      type: boolean
+
+                securityContext:
+                  description: Security context
+                  type: object
+                  properties:
+                    fsGroup:
+                      nullable: true
+                      type: integer
+                    runAsUser:
+                      nullable: true
+                      type: integer
+                service:
+                  description: Service definition
+                  type: object
+                  properties:
+                    port:
+                      type: integer
+
+            tradeTransactionalDB:
+              description: Trade transaction database
+              type: object
+              properties:
+                nameOverride:
+                  type: string
+                master:
+                  description: Master properties
+                  type: object
+                  properties:
+                    persistence:
+                      description: Persistence enabled
+                      type: object
+                      properties:
+                        enabled:
+                          type: boolean
+
+                slave:
+                  description: Slave properties
+                  type: object
+                  properties:
+                    replicas:
+                      description: Number of replicas
+                      type: integer
+
+
+                db:
+                  description: Database properties
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    user:
+                      type: string
+                    password:
+                      type: string
+                    forcePassword:
+                      type: boolean
+
+
+                service:
+                  description: Service definition
+                  type: object
+                  properties:
+                    port:
+                      type: integer
+
+                serviceAccount:
+                  description: Service account properties
+                  type: object
+                  properties:
+                    create:
+                      type: boolean
+
+                rbac:
+                  description: RBAC properties
+                  type: object
+                  properties:
+                    create:
+                      type: boolean
+
+
+                securityContext:
+                  description: Security context
+                  type: object
+                  properties:
+                    fsGroup:
+                      nullable: true
+                      type: integer
+                    runAsUser:
+                      nullable: true
+                      type: integer
+
+                rootUser:
+                  description: Force users to specify a root password
+                  type: object
+                  properties:
+                    forcePassword:
+                      type: boolean
+
+
+                replication:
+                  description: Enable replication
+                  type: object
+                  properties:
+                    enabled:
+                      type: boolean
+
+                initdbScriptsConfigMap:
+                  description: Config Map with script to be run at first boot
+                  type: string
+                  

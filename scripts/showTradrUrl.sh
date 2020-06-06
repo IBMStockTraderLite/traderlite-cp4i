@@ -12,6 +12,6 @@
 #    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #    See the License for the specific language governing permissions and
 #    limitations under the License
-URL=`oc get route traderlite-tradr --template='http://{{ .spec.host }}{{ .spec.path }}'`
-echo "URL for the Trader Lite app:"
+URL=`oc get route tradr --template='http://{{ .spec.host }}{{ .spec.path }}'`
+echo "URL for the Stock Trader app:"
 echo $URL

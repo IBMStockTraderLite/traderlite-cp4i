@@ -1,0 +1,5 @@
+---
+- version: v1
+  group: operators.clouddragons.com
+  kind: TraderLite
+  chart: helm-charts/traderlite

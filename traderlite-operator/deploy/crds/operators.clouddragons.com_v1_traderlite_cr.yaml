@@ -1,0 +1,141 @@
+apiVersion: operators.clouddragons.com/v1
+kind: TraderLite
+metadata:
+  name: example-traderlite
+spec:
+  # Default values copied from <project_dir>/helm-charts/traderlite/values.yaml
+  
+  global:
+    kafkaAccess:
+      apiKey: <your Kafka api key>
+      bootstrapHost: <Event Streams bootstrap host>
+      topic: <Event Streams topic>
+    mongodbaccess:
+      mongodbDatabase: trader
+      mongodbPassword: n0tSecure
+      mongodbPort: 27017
+      mongodbUsername: traderuser
+    mqaccess:
+      channel: DEV.APP.SVRCONN
+      password: passw0rd
+      qmgr: QMTRADER
+      qname: TRADE.EVENT.QUEUE
+      secret:
+        name: traderlite-localmq-secret
+      user: app
+  kafkaConnect:
+    image:
+      pullPolicy: Always
+      repository: clouddragons/stocktrader-kafka-connect-standalone-cp4i
+      tag: "1.2"
+    keystore:
+      secret:
+        name: kafkaconnect-keystore
+  kafkaIntegration:
+    enabled: false
+  localMQ:
+    image:
+      repository: clouddragons/trader-mq
+      tag: 9.1.5.0-r1
+    license: accept
+    metrics:
+      enabled: false
+    persistence:
+      enabled: false
+    queueManager:
+      dev:
+        secret:
+          adminPasswordKey: password
+          appPasswordKey: password
+          name: traderlite-localmq-secret
+      name: QMTRADER
+  portfolioMicroservice:
+    image:
+      pullPolicy: Always
+      pullSecrets: null
+      repository: clouddragons/portfolio-spring-cp4i
+      tag: "1.1"
+    service:
+      port: 8080
+  salesforceIntegration:
+    enabled: false
+    flow:
+      apiKey: notsecured
+      path: /Client
+      url: <your app connect flow endpoint>
+  stockQuoteMicroservice:
+    apic:
+      clientId: <your api connect cliendId for the external stock quote service>
+      url: <your api connect endpoint for the external stock quote service>
+    image:
+      pullPolicy: Always
+      pullSecrets: null
+      repository: clouddragons/stock-quote-liberty
+      tag: "1.0"
+    service:
+      port: 9080
+  tradeHistoryDB:
+    mongodbDatabase: trader
+    mongodbPassword: n0tSecure
+    mongodbRootPassword: n0tSecure
+    mongodbUsername: traderuser
+    nameOverride: mongodb
+    persistence:
+      enabled: false
+    securityContext:
+      fsGroup: null
+      runAsUser: null
+    service:
+      port: 27017
+      type: ClusterIP
+  tradeHistoryMicroservice:
+    image:
+      pullPolicy: Always
+      pullSecrets: null
+      repository: clouddragons/trade-history-python
+      tag: "2.0"
+    service:
+      port: 5000
+  tradeTransactionalDB:
+    db:
+      forcePassword: false
+      name: trader
+      password: n0tSecure
+      user: traderuser
+    initdbScriptsConfigMap: mariadb-init-scripts
+    master:
+      persistence:
+        enabled: false
+      resources:
+        limits:
+          cpu: 500m
+          memory: 500Mi
+        requests:
+          cpu: 200m
+          memory: 250Mi
+    nameOverride: mariadb
+    rbac:
+      create: false
+    replication:
+      enabled: false
+    rootUser:
+      forcePassword: false
+    securityContext:
+      fsGroup: null
+      runAsUser: null
+    service:
+      port: 3306
+      type: ClusterIP
+    serviceAccount:
+      create: false
+    slave:
+      replicas: 0
+  tradrMicroservice:
+    image:
+      pullPolicy: Always
+      pullSecrets: null
+      repository: clouddragons/tradr-node-jquery-cp4i
+      tag: "1.0"
+    service:
+      port: 3000
+  

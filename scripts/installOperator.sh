@@ -13,34 +13,13 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-
 # Validate directory  script is run form
-if test "$0" = "./cleanup.sh"
+if test "$0" = "./installOperator.sh"
 then
    echo "Script being run from correct folder"
 else
    echo "Fatal error: Must be run from folder where this script resides"
    exit 1
-fi
-
-usage () {
-  echo "Usage: use optional --all flag to delete operator  too"
-  echo "cleanup.sh [--all]"
-}
-
-if [ "$#" -gt 1 ]
-then
-    usage
-    exit 1
-fi
-
-if [ "$#" -eq 1 ]
-then
-   if [ "$1" != "--all" ]
-   then
-      usage
-      exit 1
-   fi
 fi
 
 # Validate STUDENTID
@@ -78,30 +57,48 @@ if [[ "$PROJECT" != "trader-$STUDENTID" ]]; then
 fi
 
 
-oc get TraderLite/traderlite > /dev/null 2>&1
-if [ $? -eq 0 ]; then
-  echo "Uninstalling  Trader Lite app components"
-  oc delete TraderLite/traderlite
-  if [ $? -ne 0 ]; then
-     echo "Error uninstalling Trader Lite  app components"
-     exit 1
-  fi
+echo "Installing Operator ..."
+cat <<EOF | oc create -f -
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: $PROJECT-operators
+spec:
+  targetNamespaces:
+  - $PROJECT
+EOF
+
+if [ $? -ne 0 ]; then
+  echo "Fatal error installing Trader Lite Operator Group"
+  exit 1
 fi
 
-
-oc get secret kafkaconnect-keystore > /dev/null 2>&1
-if [ $? -eq 0 ]; then
-  oc delete secret kafkaconnect-keystore
+oc create -f ../traderlite-operator/deploy/role.yaml
+if [ $? -ne 0 ]; then
+  echo "Fatal error installing Trader Lite Operator Role"
+  exit 1
+fi
+oc create -f ../traderlite-operator/deploy/role_binding.yaml
+if [ $? -ne 0 ]; then
+  echo "Fatal error installing Trader Lite Operator RoleBinding"
+  exit 1
+fi
+oc create -f ../traderlite-operator/deploy/service_account.yaml
+if [ $? -ne 0 ]; then
+  echo "Fatal error installing Trader Lite Operator Service Account "
+  exit 1
+fi
+oc create -f ../traderlite-operator/deploy/crds/operators.clouddragons.com_traderlites_crd.yaml
+if [ $? -ne 0 ]; then
+  echo "Fatal error installing Trader Lite Operator CRD"
+  exit 1
 fi
 
-
-if [ "$#" -eq 1 ]
-then
-   echo "Uninstalling operator"
-   oc delete csv traderlite-operator.v1.0.0
-   oc delete crd traderlites.operators.clouddragons.com
-   oc delete sa traderlite-operator
-   oc delete rolebinding traderlite-operator
-   oc delete role traderlite-operator
-   oc delete OperatorGroup $PROJECT-operators
+oc create -f ../traderlite-operator/deploy/olm-catalog/traderlite-operator/manifests/traderlite-operator.clusterserviceversion.yaml
+if [ $? -ne 0 ]; then
+  echo "Fatal error installing Trader Lite Operator CSV"
+  exit 1
 fi
+
+echo "Trader Lite Operator install successful"
+exit 0

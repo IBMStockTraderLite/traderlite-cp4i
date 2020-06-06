@@ -81,30 +81,26 @@ fi
 source ./helpers/utils.sh
 
 # Checking if Trader Lite V2.0 chart already installed
-echo "Verifying that Trader Lite Helm chart is already installed ..."
+echo "Verifying that Trader Lite  is already installed ..."
 isTraderLiteInstalled
 if [ $? -eq 0 ]; then
-   echo "Found Trader Lite Helm chart installed in this project"
+   echo "Found Trader Lite installed in this project"
 else
-   echo "Fatal error: Trader Lite Helm chart not installed"
-   echo "Install the Trader Lite Helm chart and try again"
+   echo "Fatal error: Trader Lite  not installed"
+   echo "Install Trader Lite  and try again"
    exit 1
 fi
 
-# Reinstalling Trader Lite Helm chart
+# Patch TraderLite Custom Resource
 
-echo "Upgrading Trader Lite Helm chart with Salesforce Integration enabled ..."
-# helm upgrade litetrader ../litetrader -f ../custom-values.yaml
-helm upgrade traderlite  --set salesforceIntegration.enabled=true --set salesforceIntegration.flow.url=$1 --reuse-values ../traderlite
+echo "Updating Trader Lite  with Salesforce Integration enabled ..."
+oc patch TraderLite/traderlite -p "{\"spec\": {\"salesforceIntegration\": {\"enabled\": true, \"flow\": {\"url\": \"$1\"}}}}" --type=merge
 
-if [ $? -eq 0 ]; then
-  echo "Wait for all pods to be in the 'Ready' state before continuing"
-else
-  echo "Upgrade of Trader Lite Helm chart failed"
+if [ $? -ne 0 ]; then
+  echo "Update of Trader Lite failed"
   exit 1
 fi
 
-echo "Salesforce Integration configured successfully"
+echo "Salesforce Integration completed successfully"
 echo "Wait for all pods to be in the 'Ready' state before continuing"
-
 exit 0

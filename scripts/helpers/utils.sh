@@ -13,7 +13,7 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 isTraderLiteInstalled() {
-   helm history traderlite > /dev/null 2>&1
+   oc get TraderLite/traderlite > /dev/null 2>&1
    return $?
 }
 

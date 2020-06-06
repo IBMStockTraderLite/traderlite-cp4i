@@ -87,38 +87,59 @@ fi
 source ./helpers/utils.sh
 
 # Checking if Trader Lite V2.0 chart already installed
-echo "Verifying that the Trader Lite Helm chart is already installed ..."
+echo "Verifying that Trader Lite is already installed ..."
 isTraderLiteInstalled
 if [ $? -eq 0 ]; then
-   echo "Found the Trader Lite Helm chart installed in this project"
+   echo "Found Trader Lite installed in this project"
 else
-   echo "Fatal error: Trader Lite Helm chart not installed"
-   echo "Install the Trader Lite Helm chart and try again"
+   echo "Fatal error: Trader Lite not installed"
+   echo "Install Trader Lite and try again"
    exit 1
 fi
 
 
 # Kafka now being used
-KAFKA_TOPIC=stocktrader-$STUDENTID
+KAFKA_TOPIC=traderlite-$STUDENTID
 echo "Using $KAFKA_TOPIC as Kafka topic name ..."
 
-# Reinstalling Stock Trader Helm chart
-
-KEYSTORE_SECRET_NAME=`helm get values traderlite --all | yq -r .kafkaConnect.keystore.secret.name`
+# Adding secret with downloaded Java keystore
+#KEYSTORE_SECRET_NAME=`helm get values traderlite --all | yq -r .kafkaConnect.keystore.secret.name`
+KEYSTORE_SECRET_NAME="kafkaconnect-keystore"
 echo "Adding secret $KEYSTORE_SECRET_NAME with downloaded Java keystore"
 oc create secret generic $KEYSTORE_SECRET_NAME --from-file=es-cert.jks=$3
 if [ $? -ne 0 ]; then
-  echo "Update of Kafka access secret failed"
+  echo "Adding secret failed"
   exit 1
 fi
 
-echo "Upgrading Trader Lite Helm chart with Kafka Integration enabled ..."
-helm upgrade traderlite --set kafkaIntegration.enabled=true --set global.kafkaAccess.apiKey=$2 --set global.kafkaAccess.topic=$KAFKA_TOPIC --set global.kafkaAccess.bootstrapHost=$1  --reuse-values ../traderlite
+# Updating Trader Lite by patching  Custom Resource
+
+echo "Updating Trader Lite  with Kafka Integration ..."
+
+oc patch TraderLite/traderlite -p "{\"spec\": {\"kafkaIntegration\": {\"enabled\": true},\"global\": {\"kafkaAccess\": {\"apiKey\": \"$2\",\"topic\": \"$KAFKA_TOPIC\",\"bootstrapHost\": \"$1\"}}}}" --type=merge
+
+
 if [ $? -ne 0 ]; then
-  echo "Upgrade of Trader Lite Helm chart failed"
+  echo "Update of Trader Lite failed"
   exit 1
 fi
 
-echo "Kafka Integration configured successfully"
+# Wait up to 20 seconds for Kafka Connect secret to be created by previous step
+#echo "Wait up to 20 seconds for Kafka Connect secret to be created by previous step"
+#attempts=20
+#until [ "$attempts" -eq 0 ]
+#do
+#  oc get secret traderlite-kafkaconnect-configfiles  >/dev/null 2>&1 && break
+#  attempts=$((attempts-1))
+#  echo "Secret not found ${attempts} seconds remaining"
+#  sleep 1
+#done
+
+#if [ "$attempts" -eq 0 ]; then
+#  echo "Error: Kafka connect config secret not found"
+#  exit 1
+#fi
+
+echo "Kafka Integration successful"
 echo "Wait for all pods to be in the 'Ready' state before continuing"
 exit 0

@@ -71,6 +71,7 @@ The parameters allow you to:
 | tradeHistoryDB.securityContext.runAsUser | Mongo subchart RunAsUser | `nil`
 | tradeHistoryDB.service.port | Mongo subchart Endpoint port | 27017
 | |
+| tradeTransactionalDB.nameOverride | MariaDB subchart chart name override | mariadb
 | tradeTransactionalDB.db.name | MariaDB subchart db name | trader
 | tradeTransactionalDB.db.user | MariaDB subchart db user | traderuser
 | tradeTransactionalDB.db.password | MariaDB subchart db password | n0tSecure

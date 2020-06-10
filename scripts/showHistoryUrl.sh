@@ -15,3 +15,4 @@
 URL=`oc get route trade-history --template='http://{{ .spec.host }}{{ .spec.path }}/trades/1000'`
 echo "URL for the Stock Trader app trades:"
 echo $URL
+echo

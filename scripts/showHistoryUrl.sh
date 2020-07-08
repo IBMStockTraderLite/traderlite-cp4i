@@ -12,7 +12,7 @@
 #    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #    See the License for the specific language governing permissions and
 #    limitations under the License
-URL=`oc get route trade-history --template='http://{{ .spec.host }}{{ .spec.path }}/trades/1000'`
+URL=`oc get route traderlite-trade-history --template='http://{{ .spec.host }}{{ .spec.path }}/trades/1000'`
 echo "URL for the Stock Trader app trades:"
 echo $URL
 echo

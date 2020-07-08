@@ -81,7 +81,7 @@ fi
 source ./helpers/utils.sh
 
 # Checking if Trader Lite V2.0 chart already installed
-echo "Verifying that Trader Lite  is already installed ..."
+echo "Verifying that Trader Lite is already installed ..."
 isTraderLiteInstalled
 if [ $? -eq 0 ]; then
    echo "Found Trader Lite installed in this project"
@@ -93,7 +93,7 @@ fi
 
 # Patch TraderLite Custom Resource
 
-echo "Updating Trader Lite  with Salesforce Integration enabled ..."
+echo "Updating Trader Lite with Salesforce Integration enabled ..."
 oc patch TraderLite/traderlite -p "{\"spec\": {\"salesforceIntegration\": {\"enabled\": true, \"flow\": {\"url\": \"$1\"}}}}" --type=merge
 
 if [ $? -ne 0 ]; then

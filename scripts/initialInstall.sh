@@ -13,9 +13,8 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-
 # Validate directory  script is run from
-if test "$0" = "./cleanup.sh"
+if test "$0" = "./initialInstall.sh"
 then
    echo "Script being run from correct folder"
 else
@@ -24,31 +23,24 @@ else
 fi
 
 usage () {
-  echo "Usage: use optional --all flag to delete operator  too"
-  echo "cleanup.sh [--all]"
+  echo "Usage:"
+  echo "initialInstall.sh URL_TO_API_CONNECT  API_KEY"
 }
 
-if [ "$#" -gt 1 ]
+if [ "$#" -ne 2 ]
 then
     usage
     exit 1
 fi
 
-if [ "$#" -eq 1 ]
-then
-   if [ "$1" != "--all" ]
-   then
-      usage
-      exit 1
-   fi
-fi
+
 
 # Validate STUDENTID
 if [ -z "$STUDENTID" ]; then
    echo "Fatal error: required env variable STUDENTID not set"
    echo "Run the command:"
-   echo "export STUDENTID=usernnn"
-   echo "where usernnn is your assigned student id"
+   echo "export STUDENTID=user???"
+   echo "where user??? is your assigned student id"
    echo "and rerun the script"
    exit 1
 fi
@@ -77,19 +69,24 @@ if [[ "$PROJECT" != "trader-$STUDENTID" ]]; then
    exit 1
 fi
 
+echo "Installing Trader Lite using operator ..."
+cat <<EOF | oc create -f -
+apiVersion: operators.clouddragons.com/v1
+kind: TraderLite
+metadata:
+  name: traderlite
+spec:
+  stockQuoteMicroservice:
+    apic:
+      clientId: $2
+      url: $1
+EOF
 
-oc get TraderLite/traderlite > /dev/null 2>&1
 if [ $? -eq 0 ]; then
-  echo "Uninstalling  Trader Lite app components"
-  oc delete TraderLite/traderlite
-  if [ $? -ne 0 ]; then
-     echo "Error uninstalling Trader Lite  app components"
-     exit 1
-  fi
-fi
-
-
-oc get secret kafkaconnect-keystore > /dev/null 2>&1
-if [ $? -eq 0 ]; then
-  oc delete secret kafkaconnect-keystore
+  echo "Trader Lite install successful"
+  echo "Wait for all pods to be in the 'Ready' state before continuing"
+  exit 0
+else
+  echo "Fatal error installing Trader Lite"
+  exit 1
 fi

@@ -45,11 +45,24 @@ fi
 
 
 echo "Installing Trader Lite Operator CRD ..."
-oc create -f ../../traderlite-operator/deploy/crds/operators.clouddragons.com_traderlites_crd.yaml -n $PROJECT
-if [ $? -ne 0 ]; then
-  echo "Fatal error installing Trader Lite Operator CRD in namespace $PROJECT"
-  exit 1
+
+
+source ../helpers/utils.sh
+
+# Checking if Trader Lite Operator CRD is  already installed
+
+isTraderLiteOperatorCRDInstalled
+if [ $? -eq 0 ]; then
+   echo "Trader Lite Operator CRD already installed. Skipping ..."
+else
+  echo "Trader Lite Operator CRD not found. Installing ..."
+  oc create -f ../../traderlite-operator/deploy/crds/operators.clouddragons.com_traderlites_crd.yaml
+  if [ $? -ne 0 ]; then
+    echo "Fatal error installing Trader Lite Operator CRD"
+    exit 1
+  fi
 fi
+
 
 echo "Installing Trader Lite Operator Role ..."
 oc create -f ../../traderlite-operator/deploy/role.yaml -n $PROJECT
@@ -72,7 +85,7 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-#echo "Installing Trader Lite Operator CSV ..."
+echo "Installing Trader Lite Operator CSV ..."
 oc create -f ../../traderlite-operator/deploy/olm-catalog/traderlite-operator/manifests/traderlite-operator.clusterserviceversion.yaml -n $PROJECT
 if [ $? -ne 0 ]; then
   echo "Fatal error installing Trader Lite Operator CSV in namespace $PROJECT"

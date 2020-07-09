@@ -17,6 +17,11 @@ isTraderLiteInstalled() {
    return $?
 }
 
+isTraderLiteOperatorCRDInstalled() {
+   oc get crd/traderlites.operators.clouddragons.com > /dev/null 2>&1
+   return $?
+}
+
 isEventStreamsEnabled() {
   EVENT_STREAMS_STATE=`oc get cm stocktrader-config -o jsonpath='{.data.eventStreamsState}'`
   if  [ "$EVENT_STREAMS_STATE" = "enabled" ]; then

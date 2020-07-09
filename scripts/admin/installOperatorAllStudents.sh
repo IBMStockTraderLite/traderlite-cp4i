@@ -69,23 +69,32 @@ EOF
     exit 1
   fi
 
-  oc create -f ../traderlite-operator/deploy/role.yaml -n $PROJECT
+
+  oc create -f ../../traderlite-operator/deploy/role.yaml -n $PROJECT
   if [ $? -ne 0 ]; then
     echo "Fatal error installing Trader Lite Operator Role in namespace $PROJECT"
     exit 1
   fi
-  oc create -f ../traderlite-operator/deploy/role_binding.yaml -n $PROJECT
+
+
+  oc create -f ../../traderlite-operator/deploy/crds/operators.clouddragons.com_traderlites_crd.yaml -n $PROJECT
+  if [ $? -ne 0 ]; then
+    echo "Fatal error installing Trader Lite Operator CRD in namespace $PROJECT"
+    exit 1
+  fi
+
+  oc create -f ../../traderlite-operator/deploy/role_binding.yaml -n $PROJECT
   if [ $? -ne 0 ]; then
     echo "Fatal error installing Trader Lite Operator RoleBinding in namespace $PROJECT"
     exit 1
   fi
-  oc create -f ../traderlite-operator/deploy/service_account.yaml -n $PROJECT
+  oc create -f ../../traderlite-operator/deploy/service_account.yaml -n $PROJECT
   if [ $? -ne 0 ]; then
     echo "Fatal error installing Trader Lite Operator Service Account in namespace $PROJECT"
     exit 1
   fi
 
-  oc create -f ../traderlite-operator/deploy/olm-catalog/traderlite-operator/manifests/traderlite-operator.clusterserviceversion.yaml -n $PROJECT
+  oc create -f ../../traderlite-operator/deploy/olm-catalog/traderlite-operator/manifests/traderlite-operator.clusterserviceversion.yaml -n $PROJECT
   if [ $? -ne 0 ]; then
     echo "Fatal error installing Trader Lite Operator CSV in namespace $PROJECT"
     exit 1

@@ -18,52 +18,62 @@
 
 #
 
-PROJECT=`oc project -q >/dev/null 2>&1`
+PROJECT=`oc project -q`
 if [ $? -ne 0 ]; then
   echo "Fatal error accessing cluster via oc comannd line tool"
   exit 1
 fi
 
 echo "Installing Trader Lite Operator in namespace $PROJECT ..."
+echo ""
+echo "Installing Trader Lite Operator Group ..."
 cat <<EOF | oc create -f -
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
-name: $PROJECT-operators
+  name: $PROJECT-operators
 spec:
-targetNamespaces:
-- $PROJECT
+  targetNamespaces:
+  - $PROJECT
 EOF
 
-echo "Installing Trader Lite Operator Group ..."
+
 if [ $? -ne 0 ]; then
   echo "Fatal error installing Trader Lite Operator Group in namespace $PROJECT"
   exit 1
 fi
 
+
+echo "Installing Trader Lite Operator CRD ..."
+oc create -f ../../traderlite-operator/deploy/crds/operators.clouddragons.com_traderlites_crd.yaml -n $PROJECT
+if [ $? -ne 0 ]; then
+  echo "Fatal error installing Trader Lite Operator CRD in namespace $PROJECT"
+  exit 1
+fi
+
 echo "Installing Trader Lite Operator Role ..."
-oc create -f ../traderlite-operator/deploy/role.yaml -n $PROJECT
+oc create -f ../../traderlite-operator/deploy/role.yaml -n $PROJECT
 if [ $? -ne 0 ]; then
   echo "Fatal error installing Trader Lite Operator Role in namespace $PROJECT"
   exit 1
 fi
 
 echo "Installing Trader Lite Operator RoleBinding ..."
-oc create -f ../traderlite-operator/deploy/role_binding.yaml -n $PROJECT
+oc create -f ../../traderlite-operator/deploy/role_binding.yaml -n $PROJECT
 if [ $? -ne 0 ]; then
   echo "Fatal error installing Trader Lite Operator RoleBinding in namespace $PROJECT"
   exit 1
 fi
 
 echo "Installing Trader Lite Operator Service Account ..."
-oc create -f ../traderlite-operator/deploy/service_account.yaml -n $PROJECT
+oc create -f ../../traderlite-operator/deploy/service_account.yaml -n $PROJECT
 if [ $? -ne 0 ]; then
   echo "Fatal error installing Trader Lite Operator Service Account in namespace $PROJECT"
   exit 1
 fi
 
-echo "Installing Trader Lite Operator CSV ..."
-oc create -f ../traderlite-operator/deploy/olm-catalog/traderlite-operator/manifests/traderlite-operator.clusterserviceversion.yaml -n $PROJECT
+#echo "Installing Trader Lite Operator CSV ..."
+oc create -f ../../traderlite-operator/deploy/olm-catalog/traderlite-operator/manifests/traderlite-operator.clusterserviceversion.yaml -n $PROJECT
 if [ $? -ne 0 ]; then
   echo "Fatal error installing Trader Lite Operator CSV in namespace $PROJECT"
   exit 1

@@ -45,3 +45,4 @@ paths:
         required: true
         description: Comma separated list of symbols
         type: string
+

@@ -1,0 +1,61 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Salesforce Sync for Trader Lite",
+    "version": "1.0"
+  },
+  "host": "portfolio-appconn-access.student001.svc.cluster.local:8080",
+  "basePath": "/portfolio",
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/salesforce/contacts": {
+      "put": {
+        "summary": "Sync a Salesforce contact",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "contact",
+            "description": "The  Contact to update",
+            "schema": {
+              "type": "object",
+              "required": [
+                "ClientId",
+                "FirstName",
+                "LastName",
+                "Email",
+                "MobilePhone"
+              ],
+              "properties": {
+                "ClientId": {
+                  "type": "string"
+                },
+                "FirstName": {
+                  "type": "string"
+                },
+                "LastName": {
+                  "type": "string"
+                },
+                "Email": {
+                  "type": "string"
+                },
+                "MobilePhone": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  }
+}

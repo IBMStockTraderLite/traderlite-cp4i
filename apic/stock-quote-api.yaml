@@ -10,7 +10,10 @@ basePath: /stocks
 produces:
   - application/json
 securityDefinitions: {}
-
+x-ibm-configuration:
+  cors:
+    enabled: true
+  gateway: datapower-api-gateway
 paths:
   /stock-quote/djia:
     get:
@@ -45,4 +48,3 @@ paths:
         required: true
         description: Comma separated list of symbols
         type: string
-

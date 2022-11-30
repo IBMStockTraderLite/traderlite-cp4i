@@ -1,0 +1,752 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: ClusterServiceVersion
+metadata:
+  annotations:
+    alm-examples: |-
+      [
+        {
+          "apiVersion": "operators.clouddragons.com/v1alpha1",
+          "kind": "TraderLite",
+          "metadata": {
+            "name": "traderlite-sample"
+          },
+          "spec": {
+            "kafkaAccess": {
+              "bootstrapHost": "light-insecure-kafka-bootstrap.cp4i-es.svc.cluster.local:9092",
+              "topic": "student001"
+            },
+            "kafkaConnect": {
+              "cluster": "my-connect-cluster",
+              "enabled": false
+            },
+            "kafkaIntegration": {
+              "enabled": false
+            },
+            "mqaccess": {
+              "channel": "TRADER.TO.MQ",
+              "listener": "quickstart-cp4i-ibm-mq.cp4i-mq.svc.cluster.local(1414)",
+              "password": "passw0rd",
+              "qmgr": "QMTRADER",
+              "qname": "STUDENT001.QUEUE",
+              "user": "app"
+            },
+            "salesforceIntegration": {
+              "enabled": false,
+              "flow": {
+                "apiKey": "notsecured",
+                "path": "/Client",
+                "url": "\u003cyour app connect flow endpoint\u003e"
+              }
+            },
+            "stockQuoteMicroservice": {
+              "apic": {
+                "clientId": "MyClientId",
+                "url": "https://stock-trader-quote.us-south.cf.appdomain.cloud"
+              }
+            },
+            "tradeHistoryDB": {
+              "affinity": {},
+              "affinityArbiter": {},
+              "annotations": {},
+              "clusterDomain": "cluster.local",
+              "configmap": null,
+              "global": {},
+              "image": {
+                "debug": false,
+                "pullPolicy": "IfNotPresent",
+                "registry": "docker.io",
+                "repository": "bitnami/mongodb",
+                "tag": "4.0.13-debian-9-r0"
+              },
+              "ingress": {
+                "certManager": false,
+                "enabled": false,
+                "hosts": [
+                  {
+                    "name": "mongodb.local",
+                    "path": "/"
+                  }
+                ],
+                "tls": [
+                  {
+                    "hosts": [
+                      "mongodb.local"
+                    ],
+                    "secretName": "mongodb.local-tls"
+                  }
+                ]
+              },
+              "initConfigMap": {},
+              "labels": {},
+              "livenessProbe": {
+                "enabled": true,
+                "failureThreshold": 6,
+                "initialDelaySeconds": 30,
+                "periodSeconds": 10,
+                "successThreshold": 1,
+                "timeoutSeconds": 5
+              },
+              "metrics": {
+                "enabled": false,
+                "extraArgs": "",
+                "image": {
+                  "pullPolicy": "Always",
+                  "registry": "docker.io",
+                  "repository": "bitnami/mongodb-exporter",
+                  "tag": "0.10.0-debian-9-r24"
+                },
+                "livenessProbe": {
+                  "enabled": false,
+                  "failureThreshold": 3,
+                  "initialDelaySeconds": 15,
+                  "periodSeconds": 5,
+                  "successThreshold": 1,
+                  "timeoutSeconds": 5
+                },
+                "podAnnotations": {
+                  "prometheus.io/port": "9216",
+                  "prometheus.io/scrape": "true"
+                },
+                "readinessProbe": {
+                  "enabled": false,
+                  "failureThreshold": 3,
+                  "initialDelaySeconds": 5,
+                  "periodSeconds": 5,
+                  "successThreshold": 1,
+                  "timeoutSeconds": 1
+                },
+                "serviceMonitor": {
+                  "additionalLabels": {},
+                  "alerting": {
+                    "additionalLabels": {},
+                    "rules": {}
+                  },
+                  "enabled": false
+                }
+              },
+              "mongodbDatabase": "trader",
+              "mongodbDirectoryPerDB": false,
+              "mongodbDisableSystemLog": false,
+              "mongodbEnableIPv6": false,
+              "mongodbExtraFlags": [],
+              "mongodbPassword": "n0tSecure",
+              "mongodbRootPassword": "n0tSecure",
+              "mongodbSystemLogVerbosity": 0,
+              "mongodbUsername": "traderuser",
+              "nameOverride": "mongodb",
+              "nodeSelector": {},
+              "persistence": {
+                "accessModes": [
+                  "ReadWriteOnce"
+                ],
+                "annotations": {},
+                "enabled": false,
+                "mountPath": "/bitnami/mongodb",
+                "size": "8Gi",
+                "subPath": ""
+              },
+              "podAnnotations": {},
+              "podLabels": {},
+              "readinessProbe": {
+                "enabled": true,
+                "failureThreshold": 6,
+                "initialDelaySeconds": 5,
+                "periodSeconds": 10,
+                "successThreshold": 1,
+                "timeoutSeconds": 5
+              },
+              "replicaSet": {
+                "enabled": false,
+                "name": "rs0",
+                "pdb": {
+                  "enabled": true,
+                  "minAvailable": {
+                    "arbiter": 1,
+                    "primary": 1,
+                    "secondary": 1
+                  }
+                },
+                "replicas": {
+                  "arbiter": 1,
+                  "secondary": 1
+                },
+                "useHostnames": true
+              },
+              "resources": {},
+              "resourcesArbiter": {},
+              "securityContext": {
+                "enabled": true,
+                "fsGroup": 1001,
+                "runAsUser": 1001
+              },
+              "service": {
+                "annotations": {},
+                "port": 27017,
+                "type": "ClusterIP"
+              },
+              "tolerations": [],
+              "updateStrategy": {
+                "type": "RollingUpdate"
+              },
+              "usePassword": true,
+              "volumePermissions": {
+                "enabled": false,
+                "image": {
+                  "pullPolicy": "Always",
+                  "registry": "docker.io",
+                  "repository": "bitnami/minideb",
+                  "tag": "stretch"
+                },
+                "resources": {}
+              }
+            },
+            "tradeTransactionalDB": {
+              "db": {
+                "forcePassword": false,
+                "injectSecretsAsVolume": false,
+                "name": "trader",
+                "password": "n0tSecure",
+                "user": "traderuser"
+              },
+              "global": {},
+              "image": {
+                "debug": false,
+                "pullPolicy": "IfNotPresent",
+                "registry": "docker.io",
+                "repository": "bitnami/mariadb",
+                "tag": "10.3.23-debian-10-r0"
+              },
+              "initdbScriptsConfigMap": "mariadb-init-scripts",
+              "master": {
+                "affinity": {},
+                "antiAffinity": "soft",
+                "config": "[mysqld]\nskip-name-resolve\nexplicit_defaults_for_timestamp\nbasedir=/opt/bitnami/mariadb\nplugin_dir=/opt/bitnami/mariadb/plugin\nport=3306\nsocket=/opt/bitnami/mariadb/tmp/mysql.sock\ntmpdir=/opt/bitnami/mariadb/tmp\nmax_allowed_packet=16M\nbind-address=0.0.0.0\npid-file=/opt/bitnami/mariadb/tmp/mysqld.pid\nlog-error=/opt/bitnami/mariadb/logs/mysqld.log\ncharacter-set-server=UTF8\ncollation-server=utf8_general_ci\n\n[client]\nport=3306\nsocket=/opt/bitnami/mariadb/tmp/mysql.sock\ndefault-character-set=UTF8\nplugin_dir=/opt/bitnami/mariadb/plugin\n\n[manager]\nport=3306\nsocket=/opt/bitnami/mariadb/tmp/mysql.sock\npid-file=/opt/bitnami/mariadb/tmp/mysqld.pid",
+                "extraEnvVars": null,
+                "extraEnvVarsCM": null,
+                "extraEnvVarsSecret": null,
+                "extraInitContainers": [],
+                "livenessProbe": {
+                  "enabled": true,
+                  "failureThreshold": 3,
+                  "initialDelaySeconds": 120,
+                  "periodSeconds": 10,
+                  "successThreshold": 1,
+                  "timeoutSeconds": 1
+                },
+                "nodeSelector": {},
+                "persistence": {
+                  "accessModes": [
+                    "ReadWriteOnce"
+                  ],
+                  "annotations": {},
+                  "enabled": false,
+                  "mountPath": "/bitnami/mariadb",
+                  "size": "8Gi"
+                },
+                "podDisruptionBudget": {
+                  "enabled": false,
+                  "minAvailable": 1
+                },
+                "readinessProbe": {
+                  "enabled": true,
+                  "failureThreshold": 3,
+                  "initialDelaySeconds": 30,
+                  "periodSeconds": 10,
+                  "successThreshold": 1,
+                  "timeoutSeconds": 1
+                },
+                "resources": {
+                  "limits": {
+                    "cpu": "500m",
+                    "memory": "500Mi"
+                  },
+                  "requests": {
+                    "cpu": "200m",
+                    "memory": "250Mi"
+                  }
+                },
+                "service": {
+                  "annotations": {}
+                },
+                "tolerations": [],
+                "updateStrategy": {
+                  "type": "RollingUpdate"
+                }
+              },
+              "metrics": {
+                "annotations": {
+                  "prometheus.io/port": "9104",
+                  "prometheus.io/scrape": "true"
+                },
+                "enabled": false,
+                "extraArgs": {
+                  "master": [],
+                  "slave": []
+                },
+                "image": {
+                  "pullPolicy": "IfNotPresent",
+                  "registry": "docker.io",
+                  "repository": "bitnami/mysqld-exporter",
+                  "tag": "0.12.1-debian-10-r106"
+                },
+                "livenessProbe": {
+                  "enabled": true,
+                  "failureThreshold": 3,
+                  "initialDelaySeconds": 120,
+                  "periodSeconds": 10,
+                  "successThreshold": 1,
+                  "timeoutSeconds": 1
+                },
+                "readinessProbe": {
+                  "enabled": true,
+                  "failureThreshold": 3,
+                  "initialDelaySeconds": 30,
+                  "periodSeconds": 10,
+                  "successThreshold": 1,
+                  "timeoutSeconds": 1
+                },
+                "resources": {},
+                "serviceMonitor": {
+                  "enabled": false,
+                  "selector": {
+                    "prometheus": "kube-prometheus"
+                  }
+                }
+              },
+              "nameOverride": "mariadb",
+              "rbac": {
+                "create": false
+              },
+              "replication": {
+                "enabled": false,
+                "forcePassword": false,
+                "injectSecretsAsVolume": false,
+                "password": "",
+                "user": "replicator"
+              },
+              "rootUser": {
+                "forcePassword": false,
+                "injectSecretsAsVolume": false,
+                "password": "n0tSecure"
+              },
+              "securityContext": {
+                "enabled": true,
+                "fsGroup": 1001,
+                "runAsUser": 1001
+              },
+              "service": {
+                "port": 3306,
+                "type": "ClusterIP"
+              },
+              "serviceAccount": {
+                "create": false
+              },
+              "slave": {
+                "affinity": {},
+                "antiAffinity": "soft",
+                "config": "[mysqld]\nskip-name-resolve\nexplicit_defaults_for_timestamp\nbasedir=/opt/bitnami/mariadb\nport=3306\nsocket=/opt/bitnami/mariadb/tmp/mysql.sock\ntmpdir=/opt/bitnami/mariadb/tmp\nmax_allowed_packet=16M\nbind-address=0.0.0.0\npid-file=/opt/bitnami/mariadb/tmp/mysqld.pid\nlog-error=/opt/bitnami/mariadb/logs/mysqld.log\ncharacter-set-server=UTF8\ncollation-server=utf8_general_ci\n\n[client]\nport=3306\nsocket=/opt/bitnami/mariadb/tmp/mysql.sock\ndefault-character-set=UTF8\n\n[manager]\nport=3306\nsocket=/opt/bitnami/mariadb/tmp/mysql.sock\npid-file=/opt/bitnami/mariadb/tmp/mysqld.pid",
+                "extraEnvVars": null,
+                "extraEnvVarsCM": null,
+                "extraEnvVarsSecret": null,
+                "extraInitContainers": null,
+                "livenessProbe": {
+                  "enabled": true,
+                  "failureThreshold": 3,
+                  "initialDelaySeconds": 120,
+                  "periodSeconds": 10,
+                  "successThreshold": 1,
+                  "timeoutSeconds": 1
+                },
+                "nodeSelector": {},
+                "persistence": {
+                  "accessModes": [
+                    "ReadWriteOnce"
+                  ],
+                  "enabled": true,
+                  "size": "8Gi"
+                },
+                "podDisruptionBudget": {
+                  "enabled": false,
+                  "minAvailable": 1
+                },
+                "readinessProbe": {
+                  "enabled": true,
+                  "failureThreshold": 3,
+                  "initialDelaySeconds": 45,
+                  "periodSeconds": 10,
+                  "successThreshold": 1,
+                  "timeoutSeconds": 1
+                },
+                "replicas": 0,
+                "resources": {},
+                "service": {
+                  "annotations": {}
+                },
+                "tolerations": [],
+                "updateStrategy": {
+                  "type": "RollingUpdate"
+                }
+              },
+              "tests": {
+                "enabled": true,
+                "resources": {},
+                "testFramework": {
+                  "image": {
+                    "registry": "docker.io",
+                    "repository": "dduportal/bats",
+                    "tag": "0.4.0"
+                  },
+                  "resources": {}
+                }
+              },
+              "volumePermissions": {
+                "enabled": false,
+                "image": {
+                  "pullPolicy": "Always",
+                  "registry": "docker.io",
+                  "repository": "bitnami/minideb",
+                  "tag": "buster"
+                },
+                "resources": {}
+              }
+            }
+          }
+        }
+      ]
+    capabilities: Basic Install
+    operators.operatorframework.io/builder: operator-sdk-v1.23.0
+    operators.operatorframework.io/project_layout: helm.sdk.operatorframework.io/v1
+  name: traderlite-operator.v1.0.9
+  namespace: placeholder
+spec:
+  apiservicedefinitions: {}
+  customresourcedefinitions:
+    owned:
+    - kind: TraderLite
+      name: traderlites.operators.clouddragons.com
+      version: v1alpha1
+      description: An instance of the TraderLite app
+      displayName: TraderLite app
+      specDescriptors:
+      - description: Stock Quote Microservice
+        displayName: Stock Quote Microservice
+        path: stockQuoteMicroservice
+      - description: API Connect URL for Stock Quotes
+        displayName: API Connect URL
+        path: stockQuoteMicroservice.apic.url
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:stockQuoteMicroservice
+      - description: API Connect ClientId for Stock Quotes
+        displayName: API Connect ClientId
+        path: stockQuoteMicroservice.apic.clientId
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:stockQuoteMicroservice
+      - description: Salesforce integration
+        displayName: Salesforce integration
+        path: salesforceIntegration
+      - description: Salesforce integration enabled
+        displayName: Enabled
+        path: salesforceIntegration.enabled
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:salesforceIntegration
+      - description: Salesforce integration Flow URL
+        displayName: Flow URL
+        path: salesforceIntegration.flow.url
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:salesforceIntegration
+      - description: Salesforce integration Flow Path
+        displayName: Flow Path
+        path: salesforceIntegration.flow.path
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:salesforceIntegration
+      - description: Salesforce integration Flow API key
+        displayName: Flow API key
+        path: salesforceIntegration.flow.apiKey
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:salesforceIntegration
+      - description: Kafka integration
+        displayName: Kafka integration
+        path: kafkaIntegration
+      - description: Kafka integration enabled
+        displayName: Enabled
+        path: kafkaIntegration.enabled
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:kafkaIntegration
+      - description: MQ Access Details
+        displayName: MQ Access
+        path: mqaccess
+      - description: MQ Queue Name
+        displayName: Queue Name
+        path: mqaccess.qname
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:select:STUDENT001.QUEUE
+        - urn:alm:descriptor:com.tectonic.ui:select:STUDENT002.QUEUE
+        - urn:alm:descriptor:com.tectonic.ui:select:STUDENT003.QUEUE
+        - urn:alm:descriptor:com.tectonic.ui:select:STUDENT004.QUEUE
+        - urn:alm:descriptor:com.tectonic.ui:select:STUDENT005.QUEUE
+        - urn:alm:descriptor:com.tectonic.ui:select:STUDENT006.QUEUE
+        - urn:alm:descriptor:com.tectonic.ui:select:STUDENT007.QUEUE
+        - urn:alm:descriptor:com.tectonic.ui:select:STUDENT008.QUEUE
+        - urn:alm:descriptor:com.tectonic.ui:select:STUDENT009.QUEUE
+        - urn:alm:descriptor:com.tectonic.ui:select:STUDENT010.QUEUE
+        - urn:alm:descriptor:com.tectonic.ui:select:STUDENT011.QUEUE
+        - urn:alm:descriptor:com.tectonic.ui:select:STUDENT012.QUEUE
+        - urn:alm:descriptor:com.tectonic.ui:select:STUDENT013.QUEUE
+        - urn:alm:descriptor:com.tectonic.ui:select:STUDENT014.QUEUE
+        - urn:alm:descriptor:com.tectonic.ui:select:STUDENT015.QUEUE
+        - urn:alm:descriptor:com.tectonic.ui:select:STUDENT016.QUEUE
+        - urn:alm:descriptor:com.tectonic.ui:select:STUDENT017.QUEUE
+        - urn:alm:descriptor:com.tectonic.ui:select:STUDENT018.QUEUE
+        - urn:alm:descriptor:com.tectonic.ui:select:STUDENT019.QUEUE
+        - urn:alm:descriptor:com.tectonic.ui:select:STUDENT020.QUEUE
+        - urn:alm:descriptor:com.tectonic.ui:select:STUDENT021.QUEUE
+        - urn:alm:descriptor:com.tectonic.ui:select:STUDENT022.QUEUE
+        - urn:alm:descriptor:com.tectonic.ui:select:STUDENT023.QUEUE
+        - urn:alm:descriptor:com.tectonic.ui:select:STUDENT024.QUEUE
+        - urn:alm:descriptor:com.tectonic.ui:select:STUDENT025.QUEUE
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:mqaccess
+      - description: Kafka Access Details
+        displayName: Kafka Access
+        path: kafkaAccess
+      - description: Kafka Topic Name
+        displayName: Topic Name
+        path: kafkaAccess.topic
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:select:student001
+        - urn:alm:descriptor:com.tectonic.ui:select:student002
+        - urn:alm:descriptor:com.tectonic.ui:select:student003
+        - urn:alm:descriptor:com.tectonic.ui:select:student004
+        - urn:alm:descriptor:com.tectonic.ui:select:student005
+        - urn:alm:descriptor:com.tectonic.ui:select:student006
+        - urn:alm:descriptor:com.tectonic.ui:select:student007
+        - urn:alm:descriptor:com.tectonic.ui:select:student008
+        - urn:alm:descriptor:com.tectonic.ui:select:student009
+        - urn:alm:descriptor:com.tectonic.ui:select:student010
+        - urn:alm:descriptor:com.tectonic.ui:select:student011
+        - urn:alm:descriptor:com.tectonic.ui:select:student012
+        - urn:alm:descriptor:com.tectonic.ui:select:student013
+        - urn:alm:descriptor:com.tectonic.ui:select:student014
+        - urn:alm:descriptor:com.tectonic.ui:select:student015
+        - urn:alm:descriptor:com.tectonic.ui:select:student016
+        - urn:alm:descriptor:com.tectonic.ui:select:student017
+        - urn:alm:descriptor:com.tectonic.ui:select:student018
+        - urn:alm:descriptor:com.tectonic.ui:select:student019
+        - urn:alm:descriptor:com.tectonic.ui:select:student020
+        - urn:alm:descriptor:com.tectonic.ui:select:student021
+        - urn:alm:descriptor:com.tectonic.ui:select:student022
+        - urn:alm:descriptor:com.tectonic.ui:select:student023
+        - urn:alm:descriptor:com.tectonic.ui:select:student024
+        - urn:alm:descriptor:com.tectonic.ui:select:student025
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:kafkaAccess
+      - description: Kafka Connect Details
+        displayName: Kafka Connect
+        path: kafkaConnect
+      - description: Kafka Connect enabled
+        displayName: Enabled
+        path: kafkaConnect.enabled
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - description: Kafka Connect cluster name
+        displayName: Kafka Connect cluster name
+        path: kafkaConnect.cluster
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - description: HIDDEN FIELDS - MongoDb and all its child fields
+        displayName: HIDDEN FIELDS - MongoDb and all its child fields
+        path: tradeHistoryDB
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:hidden
+      - description: HIDDEN FIELDS - MariaDB and all its child fields
+        displayName: HIDDEN FIELDS - MariaDB and all its child fields
+        path: tradeTransactionalDB
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:hidden
+  description: Operator for TraderLite App
+  displayName: TraderLite Operator
+  icon:
+  - base64data: "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"
+    mediatype: "image/jpeg"
+  install:
+    spec:
+      clusterPermissions:
+      - rules:
+        - apiGroups:
+          - ""
+          resources:
+          - namespaces
+          verbs:
+          - get
+        - apiGroups:
+          - ""
+          resources:
+          - secrets
+          verbs:
+          - '*'
+        - apiGroups:
+          - ""
+          resources:
+          - events
+          verbs:
+          - create
+        - apiGroups:
+          - operators.clouddragons.com
+          resources:
+          - traderlites
+          - traderlites/status
+          - traderlites/finalizers
+          verbs:
+          - create
+          - delete
+          - get
+          - list
+          - patch
+          - update
+          - watch
+        - apiGroups:
+          - apps
+          resources:
+          - deployments
+          - statefulsets
+          verbs:
+          - '*'
+        - apiGroups:
+          - route.openshift.io
+          resources:
+          - routes
+          verbs:
+          - '*'
+        - apiGroups:
+          - ""
+          resources:
+          - configmaps
+          - secrets
+          - services
+          verbs:
+          - '*'
+        - apiGroups:
+          - eventstreams.ibm.com
+          resources:
+          - kafkaconnects
+          - kafkaconnectors
+          verbs:
+          - '*'
+        - apiGroups:
+          - authentication.k8s.io
+          resources:
+          - tokenreviews
+          verbs:
+          - create
+        - apiGroups:
+          - authorization.k8s.io
+          resources:
+          - subjectaccessreviews
+          verbs:
+          - create
+        serviceAccountName: default
+      deployments:
+      - label:
+          control-plane: controller-manager
+        name: traderlite-operator-controller-manager
+        spec:
+          replicas: 1
+          selector:
+            matchLabels:
+              control-plane: controller-manager
+          strategy: {}
+          template:
+            metadata:
+              labels:
+                control-plane: controller-manager
+            spec:
+              containers:
+              - args:
+                - --secure-listen-address=0.0.0.0:8443
+                - --upstream=http://127.0.0.1:8080/
+                - --logtostderr=true
+                - --v=10
+                image: registry.redhat.io/openshift4/ose-kube-rbac-proxy:v4.6
+                name: kube-rbac-proxy
+                ports:
+                - containerPort: 8443
+                  name: https
+                resources: {}
+              - args:
+                - --metrics-addr=127.0.0.1:8080
+                - --enable-leader-election
+                - --leader-election-id=traderlite-operator
+                image: quay.io/clouddragons/traderlite-operator:3.0.4.5
+                livenessProbe:
+                  httpGet:
+                    path: /healthz
+                    port: 8081
+                  initialDelaySeconds: 15
+                  periodSeconds: 20
+                name: manager
+                readinessProbe:
+                  httpGet:
+                    path: /readyz
+                    port: 8081
+                  initialDelaySeconds: 5
+                  periodSeconds: 10
+                resources:
+                  limits:
+                    cpu: 500m
+                    memory: 500Mi
+                  requests:
+                    cpu: 100m
+                    memory: 60Mi
+              terminationGracePeriodSeconds: 10
+      permissions:
+      - rules:
+        - apiGroups:
+          - ""
+          resources:
+          - configmaps
+          verbs:
+          - get
+          - list
+          - watch
+          - create
+          - update
+          - patch
+          - delete
+        - apiGroups:
+          - ""
+          resources:
+          - events
+          verbs:
+          - create
+          - patch
+        serviceAccountName: default
+    strategy: deployment
+  installModes:
+  - supported: false
+    type: OwnNamespace
+  - supported: false
+    type: SingleNamespace
+  - supported: false
+    type: MultiNamespace
+  - supported: true
+    type: AllNamespaces
+  keywords:
+  - cp4i
+  - integration
+  - workshop
+  links:
+  - name: Traderlite Operator
+    url: https://traderlite-operator.domain
+  maintainers:
+  - email: carew@us.ibm.com
+    name: David Carew
+  maturity: alpha
+  provider:
+    name: IBM Build Labs
+    url: https://developer.ibm.com
+  version: 1.0.9

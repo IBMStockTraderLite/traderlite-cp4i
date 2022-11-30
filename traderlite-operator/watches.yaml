@@ -1,5 +1,11 @@
----
-- version: v1
-  group: operators.clouddragons.com
+# Use the 'create api' subcommand to add watches to this file.
+- group: operators.clouddragons.com
+  version: v1alpha1
   kind: TraderLite
   chart: helm-charts/traderlite
+  overrideValues:
+    tradeHistoryDB.securityContext.fsGroup: null
+    tradeHistoryDB.securityContext.runAsUser: null
+    tradeTransactionalDB.securityContext.fsGroup: null
+    tradeTransactionalDB.securityContext.runAsUser: null 
+#+kubebuilder:scaffold:watch

@@ -1,24 +1,21 @@
+# Default values for traderlite.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
 # Default values for trader.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
-global:
-  kafkaAccess:
-    apiKey: <your Kafka api key>
-    topic: <Event Streams topic>
-    bootstrapHost: <Event Streams bootstrap host>
-  mqaccess:
-    qname: "TRADE.EVENT.QUEUE"
-    qmgr: "QMTRADER"
-    channel: "DEV.APP.SVRCONN"
-    user: app
-    password: passw0rd
-    secret:
-      name: traderlite-localmq-secret
-  mongodbaccess:
-    mongodbDatabase: trader
-    mongodbUsername: traderuser
-    mongodbPassword: n0tSecure
-    mongodbPort: 27017
+
+kafkaAccess:
+  topic: student001
+  bootstrapHost: "light-insecure-kafka-bootstrap.cp4i-es:9092"
+mqaccess:
+  qname: TRADER.QUEUE
+  qmgr: QMTRADER
+  channel: TRADER.TO.MQ
+  listener: quickstart-cp4i-ibm-mq.cp4i-mq(1414)
+  user: app
+  password: passw0rd
 
 kafkaIntegration:
   enabled: false
@@ -31,70 +28,13 @@ salesforceIntegration:
     apiKey: "notsecured"
 
 kafkaConnect:
-  keystore:
-    secret:
-      name: kafkaconnect-keystore
-  image:
-    repository: clouddragons/stocktrader-kafka-connect-standalone-cp4i
-    tag: "1.2"
-    pullPolicy: Always
-
-portfolioMicroservice:
-  service:
-    port: 8080
-  image:
-    repository: clouddragons/portfolio-spring-cp4i
-    tag: "1.1"
-    pullPolicy: Always
-    pullSecrets:
+  enabled: false
+  cluster: my-connect-cluster
 
 stockQuoteMicroservice:
-  service:
-    port: 9080
   apic:
-    url: <your api connect endpoint for the external stock quote service>
-    clientId: <your api connect cliendId for the external stock quote service>
-  image:
-    repository: clouddragons/stock-quote-liberty
-    tag: "1.0"
-    pullPolicy: Always
-    pullSecrets:
-
-tradeHistoryMicroservice:
-  service:
-    port: 5000
-
-  image:
-    repository: clouddragons/trade-history-python
-    tag: "2.0"
-    pullPolicy: Always
-    pullSecrets:
-
-tradrMicroservice:
-  service:
-    port: 3000
-  image:
-    repository: clouddragons/tradr-node-jquery-cp4i
-    tag: "1.0"
-    pullPolicy: Always
-    pullSecrets:
-
-localMQ:
-  license: accept
-  image:
-    repository: clouddragons/trader-mq
-    tag: 9.1.5.0-r1
-  persistence:
-    enabled: false
-  queueManager:
-    name: QMTRADER
-    dev:
-      secret:
-        name: traderlite-localmq-secret
-        adminPasswordKey: password
-        appPasswordKey: password
-  metrics:
-    enabled: false
+    url: https://stock-trader-quote.us-south.cf.appdomain.cloud
+    clientId: MyClientId
 
 tradeHistoryDB:
   mongodbDatabase: trader
@@ -106,8 +46,9 @@ tradeHistoryDB:
   persistence:
     enabled: false
   securityContext:
-    fsGroup:
-    runAsUser:
+    enabled: true
+    fsGroup: null
+    runAsUser: null
   service:
     ## Kubernetes service type, ClusterIP and NodePort are supported at present
     type: ClusterIP
@@ -166,8 +107,9 @@ tradeTransactionalDB:
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
   ##
   securityContext:
-    fsGroup:
-    runAsUser:
+    enabled: true
+    fsGroup: null
+    runAsUser: null
 
   # # Use existing secret (ignores root, db and replication passwords)
   # existingSecret:
@@ -180,6 +122,7 @@ tradeTransactionalDB:
     ##
     ## Option to force users to specify a password. That is required for ''helm upgrade'' to work properly.
     ## If it is not force, a random password will be generated.
+    password: n0tSecure
     forcePassword: false
 
   replication:

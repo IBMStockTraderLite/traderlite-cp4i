@@ -20,12 +20,6 @@ rules:
 - apiGroups:
   - ""
   resources:
-  - serviceaccounts
-  verbs:
-  - '*'
-- apiGroups:
-  - ""
-  resources:
   - events
   verbs:
   - create
@@ -90,3 +84,10 @@ rules:
   - patch
   - update
   - watch
+- apiGroups:
+  - eventstreams.ibm.com
+  resources:
+  - kafkaconnectors
+  - kafkaconnects
+  verbs:
+  - "*"

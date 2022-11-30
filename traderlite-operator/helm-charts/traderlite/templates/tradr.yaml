@@ -31,7 +31,11 @@ spec:
     spec:
       containers:
       - name: {{ .Release.Name }}-tradr
+{{ if .Values.tradrMicroservice }}
         image: "{{ .Values.tradrMicroservice.image.repository }}:{{ .Values.tradrMicroservice.image.tag }}"
+{{ else }}
+        image: "quay.io/clouddragons/tradr-node-jquery-cp4i:1.0"
+{{ end }}
         env:
           - name: STOCK_QUOTE_URL
             valueFrom:
@@ -50,7 +54,7 @@ spec:
                 name: {{ .Release.Name }}-config
                 key: portfolio.url
         ports:
-          - containerPort: {{ .Values.tradrMicroservice.service.port }}
+          - containerPort: 3000
         resources:
           limits:
             cpu: 500m
@@ -58,13 +62,15 @@ spec:
           requests:
             cpu: 500m
             memory: 500Mi
+{{ if .Values.tradrMicroservice }}
         imagePullPolicy: {{ .Values.tradrMicroservice.image.pullPolicy }}
-
-
       {{- if .Values.tradrMicroservice.image.pullSecrets }}
       imagePullSecrets:
       - name: {{ .Values.tradrMicroservice.image.pullSecrets }}
       {{- end }}
+{{ else }}
+        imagePullPolicy: IfNotPresent
+{{ end }}
 ---
 #Deploy the service
 apiVersion: v1

@@ -1,0 +1,17 @@
+{{- if .Values.kafkaConnect.enabled }}
+apiVersion: eventstreams.ibm.com/v1beta2
+kind: KafkaConnector
+metadata:
+  name: mongodb-sink
+  labels:
+     eventstreams.ibm.com/cluster: {{ .Values.kafkaConnect.cluster }}
+spec:
+  class: at.grahsl.kafka.connect.mongodb.MongoDbSinkConnector
+  tasksMax: 1
+  config:
+    topics: "{{ .Values.kafkaAccess.topic }}"
+    mongodb.collection: trades
+    mongodb.connection.uri: mongodb://{{ .Values.tradeHistoryDB.mongodbUsername }}:{{ .Values.tradeHistoryDB.mongodbPassword }}@{{ .Release.Name }}-mongodb:{{ .Values.tradeHistoryDB.service.port }}/{{ .Values.tradeHistoryDB.mongodbDatabase }}?w=1&journal=true
+    key.converter: org.apache.kafka.connect.storage.StringConverter
+    value.converter: org.apache.kafka.connect.storage.StringConverter
+{{- end }}

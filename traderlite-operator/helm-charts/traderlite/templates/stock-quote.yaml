@@ -32,7 +32,11 @@ spec:
     spec:
       containers:
       - name: {{ .Release.Name }}-stock-quote
+{{ if .Values.stockQuoteMicroservice.image }}
         image: "{{ .Values.stockQuoteMicroservice.image.repository }}:{{ .Values.stockQuoteMicroservice.image.tag }}"
+{{ else }}
+        image: "quay.io/clouddragons/stock-quote-liberty:1.0.1"
+{{ end }}
         env:
           - name: API_CONNECT_PROXY_URL
             valueFrom:
@@ -48,13 +52,16 @@ spec:
                 optional: true
 
         ports:
-          - containerPort: {{ .Values.stockQuoteMicroservice.service.port }}
-
+          - containerPort: 9080
+{{ if .Values.stockQuoteMicroservice.image }}
         imagePullPolicy: {{ .Values.stockQuoteMicroservice.image.pullPolicy }}
       {{- if .Values.stockQuoteMicroservice.image.pullSecrets }}
       imagePullSecrets:
       - name: {{ .Values.stockQuoteMicroservice.image.pullSecrets }}
       {{- end }}
+{{ else }}
+        imagePullPolicy: IfNotPresent
+{{ end }}
 ---
 #Deploy the service
 apiVersion: v1
@@ -66,7 +73,7 @@ spec:
   ports:
     - name: http
       protocol: TCP
-      port: {{ .Values.stockQuoteMicroservice.service.port }}
-      targetPort: {{ .Values.stockQuoteMicroservice.service.port }}
+      port: 9080
+      targetPort: 9080
   selector:
     app: {{ .Release.Name }}-stock-quote

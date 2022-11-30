@@ -1,0 +1,21 @@
+{{- if .Values.kafkaConnect.enabled }}
+apiVersion: eventstreams.ibm.com/v1beta2
+kind: KafkaConnector
+metadata:
+  name: mq-source
+  labels:
+    eventstreams.ibm.com/cluster: {{ .Values.kafkaConnect.cluster }}
+spec:
+  class: com.ibm.eventstreams.connect.mqsource.MQSourceConnector
+  tasksMax: 1
+  config:
+    topic: {{ .Values.kafkaAccess.topic }}
+    mq.queue.manager: {{ .Values.mqaccess.qmgr }}
+    mq.connection.name.list: {{ .Values.mqaccess.listener }}
+    mq.channel.name: {{ .Values.mqaccess.channel }}
+    mq.queue: {{ .Values.mqaccess.qname }}
+    mq.message.body.jms: true
+    mq.record.builder: com.ibm.eventstreams.connect.mqsource.builders.DefaultRecordBuilder
+    key.converter: org.apache.kafka.connect.storage.StringConverter
+    value.converter: org.apache.kafka.connect.storage.StringConverter
+{{- end }}

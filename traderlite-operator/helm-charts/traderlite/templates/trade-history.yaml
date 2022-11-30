@@ -31,7 +31,11 @@ spec:
     spec:
       containers:
       - name: trade-history
+{{ if .Values.tradeHistoryMicroservice }}
         image: "{{ .Values.tradeHistoryMicroservice.image.repository }}:{{ .Values.tradeHistoryMicroservice.image.tag }}"
+{{ else }}
+        image: "quay.io/clouddragons/trade-history-python:2.0"
+{{ end }}
         env:
           - name: DB_HOST
             valueFrom:
@@ -60,13 +64,16 @@ spec:
                 key: mongodb.db.pwd
 
         ports:
-          - containerPort: {{ .Values.tradeHistoryMicroservice.service.port }}
-
+          - containerPort: 5000
+{{ if .Values.tradeHistoryMicroservice }}
         imagePullPolicy: {{ .Values.tradeHistoryMicroservice.image.pullPolicy }}
       {{- if .Values.tradeHistoryMicroservice.image.pullSecrets }}
       imagePullSecrets:
       - name: {{ .Values.tradeHistoryMicroservice.image.pullSecrets }}
       {{- end }}
+{{ else }}
+        imagePullPolicy: IfNotPresent
+{{ end }}
 ---
 #Deploy the service
 apiVersion: v1
@@ -79,8 +86,8 @@ spec:
   ports:
     - name: http
       protocol: TCP
-      port: {{ .Values.tradeHistoryMicroservice.service.port }}
-      targetPort: {{ .Values.tradeHistoryMicroservice.service.port }}
+      port: 5000
+      targetPort: 5000
   selector:
     app: {{ .Release.Name }}-trade-history
 ---

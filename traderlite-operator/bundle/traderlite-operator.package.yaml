@@ -1,4 +1,0 @@
-packageName: traderlite-operator
-channels:
-  - name: alpha
-    currentCSV: traderlite-operator.v0.1.0

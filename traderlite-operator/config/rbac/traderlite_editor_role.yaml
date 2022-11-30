@@ -1,0 +1,24 @@
+# permissions for end users to edit traderlites.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: traderlite-editor-role
+rules:
+- apiGroups:
+  - operators.clouddragons.com
+  resources:
+  - traderlites
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - operators.clouddragons.com
+  resources:
+  - traderlites/status
+  verbs:
+  - get

@@ -1,0 +1,44 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: ClusterServiceVersion
+metadata:
+  annotations:
+    alm-examples: '[]'
+    capabilities: Basic Install
+  name: traderlite-operator.v0.0.0
+  namespace: placeholder
+spec:
+  apiservicedefinitions: {}
+  customresourcedefinitions: {}
+  description: Operator for TraderLite App
+  displayName: TraderLite Operator
+  icon:
+  - base64data: ""
+    mediatype: ""
+  install:
+    spec:
+      deployments: null
+    strategy: ""
+  installModes:
+  - supported: false
+    type: OwnNamespace
+  - supported: false
+    type: SingleNamespace
+  - supported: false
+    type: MultiNamespace
+  - supported: true
+    type: AllNamespaces
+  keywords:
+  - cp4i
+  - integration
+  - workshop
+  links:
+  - name: Traderlite Operator
+    url: https://traderlite-operator.domain
+  maintainers:
+  - email: carew@us.ibm.com
+    name: Davdi Carew
+  maturity: alpha
+  provider:
+    name: IBM Developer
+    url: https://developer.ibm.com
+  version: 0.0.0

@@ -1,0 +1,20 @@
+# permissions for end users to view traderlites.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: traderlite-viewer-role
+rules:
+- apiGroups:
+  - operators.clouddragons.com
+  resources:
+  - traderlites
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - operators.clouddragons.com
+  resources:
+  - traderlites/status
+  verbs:
+  - get

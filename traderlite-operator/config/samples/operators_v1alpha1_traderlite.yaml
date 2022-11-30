@@ -1,0 +1,376 @@
+apiVersion: operators.clouddragons.com/v1alpha1
+kind: TraderLite
+metadata:
+  name: traderlite-sample
+spec:
+  # Default values copied from <project_dir>/helm-charts/traderlite/values.yaml
+  kafkaAccess:
+    bootstrapHost: my-kafka-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092
+    topic: trader001
+  kafkaConnect:
+    cluster: my-connect-cluster
+    enabled: false
+  kafkaIntegration:
+    enabled: false
+  mqaccess:
+    channel: TRADER.TO.MQ
+    listener: quickstart-cp4i-ibm-mq.mq.svc.cluster.local(1414)
+    password: passw0rd
+    qmgr: QMTRADER
+    qname: TRADER.QUEUE
+    user: app
+  salesforceIntegration:
+    enabled: false
+    flow:
+      apiKey: notsecured
+      path: /Client
+      url: <your app connect flow endpoint>
+  stockQuoteMicroservice:
+    apic:
+      clientId: MyClientId
+      url: https://stock-trader-quote.us-south.cf.appdomain.cloud
+  tradeHistoryDB:
+    affinity: {}
+    affinityArbiter: {}
+    annotations: {}
+    clusterDomain: cluster.local
+    configmap: null
+    global: {}
+    image:
+      debug: false
+      pullPolicy: IfNotPresent
+      registry: docker.io
+      repository: bitnami/mongodb
+      tag: 4.0.13-debian-9-r0
+    ingress:
+      certManager: false
+      enabled: false
+      hosts:
+      - name: mongodb.local
+        path: /
+      tls:
+      - hosts:
+        - mongodb.local
+        secretName: mongodb.local-tls
+    initConfigMap: {}
+    labels: {}
+    livenessProbe:
+      enabled: true
+      failureThreshold: 6
+      initialDelaySeconds: 30
+      periodSeconds: 10
+      successThreshold: 1
+      timeoutSeconds: 5
+    metrics:
+      enabled: false
+      extraArgs: ""
+      image:
+        pullPolicy: Always
+        registry: docker.io
+        repository: bitnami/mongodb-exporter
+        tag: 0.10.0-debian-9-r24
+      livenessProbe:
+        enabled: false
+        failureThreshold: 3
+        initialDelaySeconds: 15
+        periodSeconds: 5
+        successThreshold: 1
+        timeoutSeconds: 5
+      podAnnotations:
+        prometheus.io/port: "9216"
+        prometheus.io/scrape: "true"
+      readinessProbe:
+        enabled: false
+        failureThreshold: 3
+        initialDelaySeconds: 5
+        periodSeconds: 5
+        successThreshold: 1
+        timeoutSeconds: 1
+      serviceMonitor:
+        additionalLabels: {}
+        alerting:
+          additionalLabels: {}
+          rules: {}
+        enabled: false
+    mongodbDatabase: trader
+    mongodbDirectoryPerDB: false
+    mongodbDisableSystemLog: false
+    mongodbEnableIPv6: false
+    mongodbExtraFlags: []
+    mongodbPassword: n0tSecure
+    mongodbRootPassword: n0tSecure
+    mongodbSystemLogVerbosity: 0
+    mongodbUsername: traderuser
+    nameOverride: mongodb
+    nodeSelector: {}
+    persistence:
+      accessModes:
+      - ReadWriteOnce
+      annotations: {}
+      enabled: false
+      mountPath: /bitnami/mongodb
+      size: 8Gi
+      subPath: ""
+    podAnnotations: {}
+    podLabels: {}
+    readinessProbe:
+      enabled: true
+      failureThreshold: 6
+      initialDelaySeconds: 5
+      periodSeconds: 10
+      successThreshold: 1
+      timeoutSeconds: 5
+    replicaSet:
+      enabled: false
+      name: rs0
+      pdb:
+        enabled: true
+        minAvailable:
+          arbiter: 1
+          primary: 1
+          secondary: 1
+      replicas:
+        arbiter: 1
+        secondary: 1
+      useHostnames: true
+    resources: {}
+    resourcesArbiter: {}
+    securityContext:
+      enabled: true
+      fsGroup: 1001
+      runAsUser: 1001
+    service:
+      annotations: {}
+      port: 27017
+      type: ClusterIP
+    tolerations: []
+    updateStrategy:
+      type: RollingUpdate
+    usePassword: true
+    volumePermissions:
+      enabled: false
+      image:
+        pullPolicy: Always
+        registry: docker.io
+        repository: bitnami/minideb
+        tag: stretch
+      resources: {}
+  tradeTransactionalDB:
+    db:
+      forcePassword: false
+      injectSecretsAsVolume: false
+      name: trader
+      password: n0tSecure
+      user: traderuser
+    global: {}
+    image:
+      debug: false
+      pullPolicy: IfNotPresent
+      registry: docker.io
+      repository: bitnami/mariadb
+      tag: 10.3.23-debian-10-r0
+    initdbScriptsConfigMap: mariadb-init-scripts
+    master:
+      affinity: {}
+      antiAffinity: soft
+      config: |-
+        [mysqld]
+        skip-name-resolve
+        explicit_defaults_for_timestamp
+        basedir=/opt/bitnami/mariadb
+        plugin_dir=/opt/bitnami/mariadb/plugin
+        port=3306
+        socket=/opt/bitnami/mariadb/tmp/mysql.sock
+        tmpdir=/opt/bitnami/mariadb/tmp
+        max_allowed_packet=16M
+        bind-address=0.0.0.0
+        pid-file=/opt/bitnami/mariadb/tmp/mysqld.pid
+        log-error=/opt/bitnami/mariadb/logs/mysqld.log
+        character-set-server=UTF8
+        collation-server=utf8_general_ci
+  
+        [client]
+        port=3306
+        socket=/opt/bitnami/mariadb/tmp/mysql.sock
+        default-character-set=UTF8
+        plugin_dir=/opt/bitnami/mariadb/plugin
+  
+        [manager]
+        port=3306
+        socket=/opt/bitnami/mariadb/tmp/mysql.sock
+        pid-file=/opt/bitnami/mariadb/tmp/mysqld.pid
+      extraEnvVars: null
+      extraEnvVarsCM: null
+      extraEnvVarsSecret: null
+      extraInitContainers: []
+      livenessProbe:
+        enabled: true
+        failureThreshold: 3
+        initialDelaySeconds: 120
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      nodeSelector: {}
+      persistence:
+        accessModes:
+        - ReadWriteOnce
+        annotations: {}
+        enabled: false
+        mountPath: /bitnami/mariadb
+        size: 8Gi
+      podDisruptionBudget:
+        enabled: false
+        minAvailable: 1
+      readinessProbe:
+        enabled: true
+        failureThreshold: 3
+        initialDelaySeconds: 30
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      resources:
+        limits:
+          cpu: 500m
+          memory: 500Mi
+        requests:
+          cpu: 200m
+          memory: 250Mi
+      service:
+        annotations: {}
+      tolerations: []
+      updateStrategy:
+        type: RollingUpdate
+    metrics:
+      annotations:
+        prometheus.io/port: "9104"
+        prometheus.io/scrape: "true"
+      enabled: false
+      extraArgs:
+        master: []
+        slave: []
+      image:
+        pullPolicy: IfNotPresent
+        registry: docker.io
+        repository: bitnami/mysqld-exporter
+        tag: 0.12.1-debian-10-r106
+      livenessProbe:
+        enabled: true
+        failureThreshold: 3
+        initialDelaySeconds: 120
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      readinessProbe:
+        enabled: true
+        failureThreshold: 3
+        initialDelaySeconds: 30
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      resources: {}
+      serviceMonitor:
+        enabled: false
+        selector:
+          prometheus: kube-prometheus
+    nameOverride: mariadb
+    rbac:
+      create: false
+    replication:
+      enabled: false
+      forcePassword: false
+      injectSecretsAsVolume: false
+      password: ""
+      user: replicator
+    rootUser:
+      forcePassword: false
+      injectSecretsAsVolume: false
+      password: n0tSecure
+    securityContext:
+      enabled: true
+      fsGroup: 1001
+      runAsUser: 1001
+    service:
+      port: 3306
+      type: ClusterIP
+    serviceAccount:
+      create: false
+    slave:
+      affinity: {}
+      antiAffinity: soft
+      config: |-
+        [mysqld]
+        skip-name-resolve
+        explicit_defaults_for_timestamp
+        basedir=/opt/bitnami/mariadb
+        port=3306
+        socket=/opt/bitnami/mariadb/tmp/mysql.sock
+        tmpdir=/opt/bitnami/mariadb/tmp
+        max_allowed_packet=16M
+        bind-address=0.0.0.0
+        pid-file=/opt/bitnami/mariadb/tmp/mysqld.pid
+        log-error=/opt/bitnami/mariadb/logs/mysqld.log
+        character-set-server=UTF8
+        collation-server=utf8_general_ci
+  
+        [client]
+        port=3306
+        socket=/opt/bitnami/mariadb/tmp/mysql.sock
+        default-character-set=UTF8
+  
+        [manager]
+        port=3306
+        socket=/opt/bitnami/mariadb/tmp/mysql.sock
+        pid-file=/opt/bitnami/mariadb/tmp/mysqld.pid
+      extraEnvVars: null
+      extraEnvVarsCM: null
+      extraEnvVarsSecret: null
+      extraInitContainers: null
+      livenessProbe:
+        enabled: true
+        failureThreshold: 3
+        initialDelaySeconds: 120
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      nodeSelector: {}
+      persistence:
+        accessModes:
+        - ReadWriteOnce
+        enabled: true
+        size: 8Gi
+      podDisruptionBudget:
+        enabled: false
+        minAvailable: 1
+      readinessProbe:
+        enabled: true
+        failureThreshold: 3
+        initialDelaySeconds: 45
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      replicas: 0
+      resources: {}
+      service:
+        annotations: {}
+      tolerations: []
+      updateStrategy:
+        type: RollingUpdate
+    tests:
+      enabled: true
+      resources: {}
+      testFramework:
+        image:
+          registry: docker.io
+          repository: dduportal/bats
+          tag: 0.4.0
+        resources: {}
+    volumePermissions:
+      enabled: false
+      image:
+        pullPolicy: Always
+        registry: docker.io
+        repository: bitnami/minideb
+        tag: buster
+      resources: {}
+  
+  

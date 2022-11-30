@@ -31,7 +31,11 @@ spec:
     spec:
       containers:
       - name: {{ .Release.Name }}-portfolio
+{{ if .Values.portfolioMicroservice }}
         image: "{{ .Values.portfolioMicroservice.image.repository }}:{{ .Values.portfolioMicroservice.image.tag }}"
+{{ else }}
+        image: "quay.io/clouddragons/portfolio-spring-cp4i:2.1"
+{{ end }}
         env:
           - name: JDBC_HOST
             valueFrom:
@@ -123,16 +127,16 @@ spec:
               configMapKeyRef:
                 name: {{ .Release.Name }}-config
                 key: tradeHistory.url
-          - name: EVENT_STREAMS_STATE
+          - name: KAFKA_INTEGRATION_STATE
             valueFrom:
               configMapKeyRef:
                 name: {{ .Release.Name }}-config
-                key: eventStreamsState
+                key: kafka.integration.state
           - name: SALESFORCE_INTEGRATION_STATE
             valueFrom:
               configMapKeyRef:
                 name: {{ .Release.Name }}-config
-                key: salesforceIntegrationState
+                key: salesforce.integration.state
         ports:
           - containerPort: 8080
         readinessProbe:
@@ -149,12 +153,15 @@ spec:
           requests:
             cpu: 600m
             memory: 500Mi
-
+{{ if .Values.portfolioMicroservice }}
         imagePullPolicy: {{ .Values.portfolioMicroservice.image.pullPolicy }}
       {{- if .Values.portfolioMicroservice.image.pullSecrets }}
       imagePullSecrets:
       - name: {{ .Values.portfolioMicroservice.image.pullSecrets }}
       {{- end }}
+{{ else }}
+        imagePullPolicy: IfNotPresent
+{{ end }}
 ---
 #Deploy the service
 apiVersion: v1
@@ -170,3 +177,13 @@ spec:
       targetPort: 8080
   selector:
     app: {{ .Release.Name }}-portfolio
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: portfolio-appconn-access
+spec:
+  type: ExternalName
+  externalName: {{ .Release.Name }}-portfolio-service.{{ .Release.Namespace }}.svc.cluster.local
+  ports:
+  - port: 8080

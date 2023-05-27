@@ -681,7 +681,7 @@ spec:
                 - --metrics-addr=127.0.0.1:8080
                 - --enable-leader-election
                 - --leader-election-id=traderlite-operator
-                image: quay.io/clouddragons/traderlite-operator:3.0.4.5
+                image: quay.io/clouddragons/traderlite-operator:3.0.4.8
                 livenessProbe:
                   httpGet:
                     path: /healthz
@@ -749,4 +749,4 @@ spec:
   provider:
     name: IBM Build Labs
     url: https://developer.ibm.com
-  version: 1.0.9
+  version: 1.0.13

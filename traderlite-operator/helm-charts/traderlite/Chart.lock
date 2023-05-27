@@ -1,0 +1,9 @@
+dependencies:
+- name: mongodb
+  repository: ""
+  version: 7.4.2
+- name: mariadb
+  repository: ""
+  version: 7.4.2
+digest: sha256:95b25c5e32d2d9d171a591bea8f172d53460b334c561dcec75fe7f396f338778
+generated: "2022-12-08T10:38:18.230327-06:00"

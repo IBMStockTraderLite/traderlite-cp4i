@@ -99,8 +99,12 @@ metadata:
     description: Route for application's http service
     haproxy.router.openshift.io/disable_cookies: 'false'
 spec:
-
   path: '/trade-history'
+  port:
+    targetPort: 5000
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge
   to:
     kind: Service
     name: {{ .Release.Name }}-trade-history-service

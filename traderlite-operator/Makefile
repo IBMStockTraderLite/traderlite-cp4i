@@ -4,7 +4,7 @@
 # - use the VERSION as arg of the bundle target (e.g make bundle VERSION=0.0.2)
 # - use environment variables to overwrite this value (e.g export VERSION=0.0.2)
 #VERSION ?= 0.0.1
-VERSION ?= 1.0.9
+VERSION ?= 1.0.13
 
 # CHANNELS define the bundle channels used in the bundle.
 # Add a new line here if you would like to change its default config. (E.g CHANNELS = "preview,fast,stable")
@@ -32,7 +32,7 @@ BUNDLE_IMG ?= quay.io/clouddragons/traderlite-operator-bundle:$(VERSION)
 
 # Image URL to use all building/pushing image targets
 #IMG ?= controller:latest
-IMG ?= quay.io/clouddragons/traderlite-operator:3.0.4.5
+IMG ?= quay.io/clouddragons/traderlite-operator:3.0.4.8
 
 all: docker-build
 

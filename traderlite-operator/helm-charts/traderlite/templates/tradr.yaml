@@ -93,6 +93,11 @@ metadata:
     haproxy.router.openshift.io/disable_cookies: 'false'
 spec:
   path: '/tradr'
+  port:
+    targetPort: 3000
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge
   to:
     kind: Service
     name: {{ .Release.Name }}-tradr-service

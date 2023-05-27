@@ -3,7 +3,7 @@ info:
   title: Realtime stock quotes
   x-ibm-name: realtime-stock-quotes
   version: 1.0.0
-host: "stock-trader-quote.us-south.cf.appdomain.cloud"
+host: "stocktrader.ibmc.buildlab.cloud"
 schemes:
   - https
 basePath: /stocks

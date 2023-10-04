@@ -4,7 +4,7 @@
     "title": "Salesforce Sync for Trader Lite",
     "version": "1.0"
   },
-  "host": "portfolio-appconn-access.student001.svc.cluster.local:8080",
+  "host": "portfolio-appconn-access.student1.svc.cluster.local:8080",
   "basePath": "/portfolio",
   "schemes": [
     "http"
